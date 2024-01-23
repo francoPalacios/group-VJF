@@ -17,4 +17,4 @@ jobs:
         # Set your project name
         project_name="@francoPalacios's VJF project"
         # Add the issue to the project using gh
-        gh issue edit ${{ github.event.issue.number }} --add-project "$project_name"
+        gh issue edit ${{ github.event.issue.number }} --add-project "@francoPalacios's VJF project"
