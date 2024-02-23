@@ -10,8 +10,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com.example.loginui/hello-view.fxml"));
-        Parent root = loader.load();
+        Parent root = FXMLLoader.load(getClass().getResource("hello-view.fxml"));
         primaryStage.setScene(new Scene(root));
         primaryStage.setTitle("Login");
         primaryStage.setResizable(false);
