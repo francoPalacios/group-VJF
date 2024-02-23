@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -23,7 +24,7 @@ public class RegisterController {
     @FXML
     private Button backToLoginButton;
 
-    private DatabaseManager databaseManager;
+    private final DatabaseManager databaseManager;
 
     public RegisterController() {
         databaseManager = new DatabaseManager();
@@ -38,7 +39,11 @@ public class RegisterController {
             User newUser = new User(email, password);
 
             if (databaseManager.addUser(newUser)) {
-                System.out.println("User added successfully");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("User Added");
+                alert.setHeaderText(null);
+                alert.setContentText("User Added Successfully");
+                alert.showAndWait();
                 openLoginWindow();
             } else {
                 System.out.println("Failed to add user");
@@ -64,10 +69,5 @@ public class RegisterController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void closeRegisterWindow() {
-        Stage stage = (Stage) registerButton.getScene().getWindow();
-        stage.close();
     }
 }
