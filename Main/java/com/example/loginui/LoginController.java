@@ -25,7 +25,7 @@ public class LoginController {
     @FXML
     private Button registerButton;
 
-    private DatabaseManager databaseManager;
+    private final DatabaseManager databaseManager;
 
     public LoginController() {
         databaseManager = new DatabaseManager();
@@ -36,6 +36,15 @@ public class LoginController {
         loginButton.setOnAction(event -> {
             String email = emailField.getText();
             String password = passwordField.getText();
+
+            if (email.isEmpty() || password.isEmpty()) {
+                Alert alExiAlert = new Alert(Alert.AlertType.ERROR);
+                alExiAlert.setTitle("Error");
+                alExiAlert.setHeaderText(null);
+                alExiAlert.setContentText("Error: Please Fill In All Fields");
+                alExiAlert.showAndWait();
+                return;
+            }
 
             if (databaseManager.validateUser(email, password)) {
                 System.out.println("Login successful");
