@@ -16,6 +16,7 @@ public class DatabaseManager {
 
     // Validate user credentials
     public boolean validateUser(String email, String password) {
+
         try {
             String query = "SELECT * FROM User WHERE Email = ? AND Password = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
