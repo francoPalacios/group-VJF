@@ -13,6 +13,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class RegisterController {
+    public TextField firstNameField;
+    public TextField lastNameField;
     @FXML
     private TextField emailField;
 
@@ -33,24 +35,45 @@ public class RegisterController {
     @FXML
     void initialize() {
         registerButton.setOnAction(event -> {
+
             String email = emailField.getText();
             String password = passwordField.getText();
+            String firstname = firstNameField.getText();
+            String lastname = lastNameField.getText();
 
-            User newUser = new User(email, password);
-
-            if (databaseManager.addUser(newUser)) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("User Added");
-                alert.setHeaderText(null);
-                alert.setContentText("User Added Successfully");
-                alert.showAndWait();
-                openLoginWindow();
-            } else {
-                System.out.println("Failed to add user");
+            if (firstname.isEmpty() || lastname.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                Alert alExiAlert = new Alert(Alert.AlertType.ERROR);
+                alExiAlert.setTitle("Error");
+                alExiAlert.setHeaderText(null);
+                alExiAlert.setContentText("Error: Please Fill In All Fields");
+                alExiAlert.showAndWait();
+                return;
             }
-        });
 
-        backToLoginButton.setOnAction(event -> openLoginWindow());
+            // Check if the email already exists in the database
+            if (databaseManager.isEmailExists(email)) {
+                Alert alExiAlert = new Alert(Alert.AlertType.ERROR);
+                alExiAlert.setTitle("Error");
+                alExiAlert.setHeaderText(null);
+                alExiAlert.setContentText("Email Is Already In Use");
+                alExiAlert.showAndWait();
+            } else {
+
+                User newUser = new User(email, password, firstname, lastname);
+
+                if (databaseManager.addUser(newUser)) {
+                    Alert addedAlert = new Alert(Alert.AlertType.INFORMATION);
+                    addedAlert.setTitle("User Added");
+                    addedAlert.setHeaderText(null);
+                    addedAlert.setContentText("User Added Successfully");
+                    addedAlert.showAndWait();
+                    openLoginWindow();
+                } else {
+                    System.out.println("Failed to add user");
+                }
+            }});
+
+            backToLoginButton.setOnAction(event -> openLoginWindow());
     }
 
     private void openLoginWindow() {
