@@ -57,6 +57,7 @@ public class LoginController {
             Parent root = loader.load();
             stage.setScene(new Scene(root));
             stage.setTitle("Register");
+            stage.setResizable(false);
             stage.show();
 
             // Close the login window
