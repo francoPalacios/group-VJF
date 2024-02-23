@@ -18,7 +18,7 @@ public class DatabaseManager {
     public boolean validateUser(String email, String password) {
 
         try {
-            String query = "SELECT * FROM User WHERE Email = ? AND Password = ?";
+            String query = "SELECT * FROM User WHERE Email = ? AND password = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, email);
             preparedStatement.setString(2, password);
@@ -34,7 +34,7 @@ public class DatabaseManager {
     // Add new user to the database
     public boolean addUser(User user) {
         try {
-            String query = "INSERT INTO User (Email, Password, Firstname, Lastname) VALUES (?, ?, ?, ?)";
+            String query = "INSERT INTO User (Email, password, Fn, Ln) VALUES (?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, user.getEmail());
             preparedStatement.setString(2, user.getPassword());
