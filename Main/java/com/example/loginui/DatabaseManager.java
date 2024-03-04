@@ -59,4 +59,34 @@ public class DatabaseManager {
             System.out.println("Error checking email existence: " + e.getMessage());
         }
         return false;
-}}
+}
+    public boolean addbudget(Budget budget) {
+        try {
+            String sql = "INSERT INTO Budget (user_id, budget_name, income, income_startdate, income_enddate) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql, 1);
+            statement.setInt(1, budget.getuserID());
+            statement.setString(2, budget.getbudgetname());
+            statement.setDouble(3, budget.getbudgetincome());
+            statement.setDate(4, Date.valueOf(budget.getbudgetstartdate()));
+            statement.setDate(5, Date.valueOf(budget.getbudgetenddate()));
+            int rowsInserted = statement.executeUpdate();
+            return rowsInserted > 0;
+        } catch (SQLException e ) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean isBudgetName(String budgetname) {
+        try {
+            String query = "SELECT * FROM Budget WHERE budget_name= ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, budgetname);
+            ResultSet resultSet = statement.executeQuery();
+            return resultSet.next(); // If resultSet.next() is true, it means email exists
+        } catch (SQLException e) {
+            System.out.println("Error checking budgetname existence: " + e.getMessage());
+        }
+        return false;
+    }
+
+}

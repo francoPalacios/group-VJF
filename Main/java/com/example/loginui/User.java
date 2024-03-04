@@ -6,12 +6,15 @@ public class User {
     private final String firstname;
     private final String lastname;
 
+
     // Constructor, getters, and setters
     public User(String email, String password, String firstname, String lastname) {
         this.email = email;
         this.password = password;
         this.firstname = firstname;
         this.lastname = lastname;
+
+
     }
 
     public String getEmail() {
