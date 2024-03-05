@@ -25,8 +25,13 @@ public class BudgetController {
     private DatePicker endDatePicker;
     @FXML
     private Button saveBudget;
-    private int userId = 1;
+    private int userId;
     private final DatabaseManager databaseManager;
+
+    public BudgetController(int userId) {
+        databaseManager = new DatabaseManager();
+        this.userId = userId;
+    }
 
     public BudgetController() {
         databaseManager = new DatabaseManager();
@@ -95,4 +100,7 @@ public class BudgetController {
     }
 
 
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 }

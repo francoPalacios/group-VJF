@@ -43,14 +43,14 @@ public class LoginController extends Component {
                 if (this.databaseManager.validateUser(email, password)) {
                     System.out.println("Login successful");
                     JOptionPane.showMessageDialog(this, "Login Successful", "Success", 1);
-                    this.openBudgetwindow();
+                    openBudgetwindow(databaseManager.getUserId(email,password));
                     Stage loginStage = (Stage)this.loginButton.getScene().getWindow();
                     loginStage.close();
 
                 } else {
                     alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Login Failed");
-                    alert.setHeaderText((String)null);
+                    alert.setHeaderText(null);
                     alert.setContentText("Invalid username or password. Please try again.");
                     alert.showAndWait();
                 }
@@ -58,7 +58,7 @@ public class LoginController extends Component {
             } else {
                 alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Error");
-                alert.setHeaderText((String)null);
+                alert.setHeaderText(null);
                 alert.setContentText("Error: Please Fill In All Fields");
                 alert.showAndWait();
             }
@@ -68,11 +68,31 @@ public class LoginController extends Component {
         });
     }
 
+    private void openBudgetwindow(int userId) {
+        try {
+            // Create BudgetController instance with userId
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com.example.loginui/addbudget.fxml"));
+            Parent root = loader.load();
+            BudgetController controller = loader.getController();
+            controller.setUserId(userId);
+
+            // Show the stage
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Budget");
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     private void openRegisterWindow() {
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/com.example.loginui/Register.fxml"));
-            Parent root = (Parent)loader.load();
+            Parent root = loader.load();
             stage.setScene(new Scene(root));
             stage.setTitle("Register");
             stage.setResizable(false);
@@ -81,21 +101,6 @@ public class LoginController extends Component {
             loginStage.close();
         } catch (IOException var5) {
             var5.printStackTrace();
-        }
-
-    }
-
-    private void openBudgetwindow() {
-        try {
-            Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/com.example.loginui/addbudget.fxml"));
-            Parent root = (Parent)loader.load();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Budget");
-            stage.setResizable(false);
-            stage.show();
-        } catch (IOException var4) {
-            var4.printStackTrace();
         }
 
     }

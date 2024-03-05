@@ -89,4 +89,22 @@ public class DatabaseManager {
         return false;
     }
 
+    // Retrieve user ID along with login validation
+    public int getUserId(String email, String password) {
+        try {
+            String query = "SELECT user_id FROM User WHERE Email = ? AND password = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, email);
+            preparedStatement.setString(2, password);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt("user_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Return -1 if user ID is not found or login fails
+    }
+
 }
