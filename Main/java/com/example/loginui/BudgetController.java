@@ -23,8 +23,7 @@ public class BudgetController {
     private DatePicker startDatePicker;
     @FXML
     private DatePicker endDatePicker;
-    @FXML
-    private Button saveBudget;
+
     private int userId;
     private final DatabaseManager databaseManager;
 
