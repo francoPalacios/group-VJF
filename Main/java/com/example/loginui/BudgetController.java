@@ -37,7 +37,7 @@ public class BudgetController {
     }
 
     @FXML
-    public void budgetadd() {
+    public void budgetadd( ) {
         String budgetName = budgetNameField.getText();
         String incomestr = incomeField.getText();
         LocalDate budgetStartDate = startDatePicker.getValue();
@@ -64,11 +64,11 @@ public class BudgetController {
         } else {
             try {
                 double value = Double.parseDouble(incomeField.getText());
-                if (value < 0) {
+                if (value <= 0) {
                     Alert alExiAlert = new Alert(Alert.AlertType.ERROR);
                     alExiAlert.setTitle("Error");
                     alExiAlert.setHeaderText(null);
-                    alExiAlert.setContentText("Error: Please enter positive number");
+                    alExiAlert.setContentText("Error: Please enter possible income");
                     alExiAlert.showAndWait();
                     return;
                 }
@@ -91,6 +91,11 @@ public class BudgetController {
                 addedAlert.setHeaderText(null);
                 addedAlert.setContentText("Budget Added Successfully");
                 addedAlert.showAndWait();
+                budgetNameField.setText("");
+                incomeField.setText("");
+                startDatePicker.setValue(null);
+                endDatePicker.setValue(null);
+
             } else {
                 System.out.println("Failed to add Budget");
             }
