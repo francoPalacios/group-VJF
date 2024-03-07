@@ -3,12 +3,14 @@
 // (powered by FernFlower decompiler)
 //
 
-package com.example.loginui;
+package com.example.dashboardui;
 
 import java.time.LocalDate;
+
+import com.example.dashboardui.Budget;
+import com.example.loginui.DatabaseManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 
@@ -64,7 +66,7 @@ public class BudgetController {
         } else {
             try {
                 double value = Double.parseDouble(incomeField.getText());
-                if (value < 0) {
+                if (value <= 0) {
                     Alert alExiAlert = new Alert(Alert.AlertType.ERROR);
                     alExiAlert.setTitle("Error");
                     alExiAlert.setHeaderText(null);
@@ -91,6 +93,11 @@ public class BudgetController {
                 addedAlert.setHeaderText(null);
                 addedAlert.setContentText("Budget Added Successfully");
                 addedAlert.showAndWait();
+                budgetNameField.setText("");
+                incomeField.setText("");
+                startDatePicker.setValue(null);
+                endDatePicker.setValue(null);
+
             } else {
                 System.out.println("Failed to add Budget");
             }

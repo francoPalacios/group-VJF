@@ -1,5 +1,7 @@
 package com.example.loginui;
 
+import com.example.dashboardui.Budget;
+
 import java.sql.*;
 
 public class DatabaseManager {

@@ -7,6 +7,8 @@ package com.example.loginui;
 
 import java.awt.Component;
 import java.io.IOException;
+
+import com.example.DataSingleton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,6 +22,8 @@ import javafx.stage.Stage;
 import javax.swing.JOptionPane;
 
 public class LoginController extends Component {
+    private Stage mainStage;
+
     @FXML
     private TextField emailField;
     @FXML
@@ -30,11 +34,14 @@ public class LoginController extends Component {
     private Button registerButton;
     private final DatabaseManager databaseManager = new DatabaseManager();
 
+    private int userId;
+
     public LoginController() {
     }
 
     @FXML
     void initialize() {
+        this.mainStage = Main.getMainStage();
         this.loginButton.setOnAction((event) -> {
             String email = this.emailField.getText();
             String password = this.passwordField.getText();
@@ -43,9 +50,9 @@ public class LoginController extends Component {
                 if (this.databaseManager.validateUser(email, password)) {
                     System.out.println("Login successful");
                     JOptionPane.showMessageDialog(this, "Login Successful", "Success", 1);
-                    openBudgetwindow(databaseManager.getUserId(email,password));
-                    Stage loginStage = (Stage)this.loginButton.getScene().getWindow();
-                    loginStage.close();
+                    openDashboardWindow(databaseManager.getUserId(email,password));
+                    //Stage loginStage = (Stage)this.loginButton.getScene().getWindow();
+                    //loginStage.close();
 
                 } else {
                     alert = new Alert(AlertType.ERROR);
@@ -68,37 +75,32 @@ public class LoginController extends Component {
         });
     }
 
-    private void openBudgetwindow(int userId) {
+    public void openDashboardWindow(int userId) {
+        DataSingleton data = DataSingleton.getInstance();
+        data.setUserId(userId);
         try {
-            // Create BudgetController instance with userId
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com.example.loginui/addbudget.fxml"));
+            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/com.example.dashboardui/Dashboard.fxml"));
             Parent root = loader.load();
-            BudgetController controller = loader.getController();
-            controller.setUserId(userId);
-
-            // Show the stage
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Budget");
-            stage.setResizable(false);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+            mainStage.setScene(new Scene(root));
+            mainStage.setTitle("Dashboard");
+            mainStage.setResizable(false);
+            mainStage.show();
+        } catch (IOException var5) {
+            var5.printStackTrace();
         }
     }
 
 
     private void openRegisterWindow() {
         try {
-            Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/com.example.loginui/Register.fxml"));
             Parent root = loader.load();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Register");
-            stage.setResizable(false);
-            stage.show();
-            Stage loginStage = (Stage)this.loginButton.getScene().getWindow();
-            loginStage.close();
+            mainStage.setScene(new Scene(root));
+            mainStage.setTitle("Register");
+            mainStage.setResizable(false);
+            mainStage.show();
+            //Stage loginStage = (Stage)this.loginButton.getScene().getWindow();
+            //loginStage.close();
         } catch (IOException var5) {
             var5.printStackTrace();
         }

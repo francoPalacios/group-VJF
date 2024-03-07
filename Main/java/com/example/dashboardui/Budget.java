@@ -1,4 +1,4 @@
-package com.example.loginui;
+package com.example.dashboardui;
 import java.time.LocalDate;
 
 public class Budget {
