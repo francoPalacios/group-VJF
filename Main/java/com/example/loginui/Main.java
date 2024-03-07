@@ -10,14 +10,18 @@ public class Main extends Application {
     private static Stage mainStage;
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) {
         Main.mainStage = primaryStage;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com.example.loginui/hello-view.fxml"));
-        Parent root = loader.load();
-        primaryStage.setScene(new Scene(root));
-        primaryStage.setTitle("Login");
-        primaryStage.setResizable(false);
-        primaryStage.show();
+        try {
+            Parent root = loader.load();
+            primaryStage.setScene(new Scene(root));
+            primaryStage.setTitle("Login");
+            primaryStage.setResizable(false);
+            primaryStage.show();
+        } catch (java.io.IOException ioe) {
+
+        }
     }
 
     public static Stage getMainStage() {

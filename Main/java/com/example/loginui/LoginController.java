@@ -9,17 +9,17 @@ import java.awt.Component;
 import java.io.IOException;
 
 import com.example.DataSingleton;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
-import javax.swing.JOptionPane;
+
+//import javax.swing.*;
+//import javax.swing.JOptionPane;
 
 public class LoginController extends Component {
     private Stage mainStage;
@@ -49,7 +49,10 @@ public class LoginController extends Component {
             if (!email.isEmpty() && !password.isEmpty()) {
                 if (this.databaseManager.validateUser(email, password)) {
                     System.out.println("Login successful");
-                    JOptionPane.showMessageDialog(this, "Login Successful", "Success", 1);
+
+                    Alert confirm = new Alert(AlertType.CONFIRMATION, "Login Successful", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+                    confirm.showAndWait();
+
                     openDashboardWindow(databaseManager.getUserId(email,password));
                     //Stage loginStage = (Stage)this.loginButton.getScene().getWindow();
                     //loginStage.close();
