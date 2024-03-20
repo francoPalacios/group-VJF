@@ -64,7 +64,7 @@ public class DatabaseManager {
 }
     public boolean addbudget(Budget budget) {
         try {
-            String sql = "INSERT INTO Budget (user_id, budget_name, income, income_startdate, income_enddate) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Budget (user_id, budget_type, Amount, budget_startdate, budget_enddate) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(sql, 1);
             statement.setInt(1, budget.getuserID());
             statement.setString(2, budget.getbudgetname());
