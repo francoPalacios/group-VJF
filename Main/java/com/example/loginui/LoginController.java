@@ -50,7 +50,7 @@ public class LoginController extends Component {
                 if (this.databaseManager.validateUser(email, password)) {
                     System.out.println("Login successful");
 
-                    Alert confirm = new Alert(AlertType.CONFIRMATION, "Login Successful", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+                    Alert confirm = new Alert(AlertType.INFORMATION, "Login Successful");
                     confirm.showAndWait();
 
                     openDashboardWindow(databaseManager.getUserId(email,password));
