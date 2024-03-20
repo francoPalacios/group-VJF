@@ -1,84 +1,112 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.example.loginui;
 
+import java.awt.Component;
+import java.io.IOException;
+
+import com.example.DataSingleton;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+//import javax.swing.*;
+//import javax.swing.JOptionPane;
 
-public class LoginController {
+public class LoginController extends Component {
+    private Stage mainStage;
+
     @FXML
     private TextField emailField;
-
     @FXML
     private PasswordField passwordField;
-
     @FXML
     private Button loginButton;
-
     @FXML
     private Button registerButton;
+    private final DatabaseManager databaseManager = new DatabaseManager();
 
-    private final DatabaseManager databaseManager;
+    private int userId;
 
     public LoginController() {
-        databaseManager = new DatabaseManager();
     }
 
     @FXML
     void initialize() {
-        loginButton.setOnAction(event -> {
-            String email = emailField.getText();
-            String password = passwordField.getText();
+        this.mainStage = Main.getMainStage();
+        this.loginButton.setOnAction((event) -> {
+            String email = this.emailField.getText();
+            String password = this.passwordField.getText();
+            Alert alert;
+            if (!email.isEmpty() && !password.isEmpty()) {
+                if (this.databaseManager.validateUser(email, password)) {
+                    System.out.println("Login successful");
 
-            if (email.isEmpty() || password.isEmpty()) {
-                Alert alExiAlert = new Alert(Alert.AlertType.ERROR);
-                alExiAlert.setTitle("Error");
-                alExiAlert.setHeaderText(null);
-                alExiAlert.setContentText("Error: Please Fill In All Fields");
-                alExiAlert.showAndWait();
-                return;
-            }
+                    Alert confirm = new Alert(AlertType.CONFIRMATION, "Login Successful", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+                    confirm.showAndWait();
 
-            if (databaseManager.validateUser(email, password)) {
-                System.out.println("Login successful");
-                // Perform further actions after successful login
+                    openDashboardWindow(databaseManager.getUserId(email,password));
+                    //Stage loginStage = (Stage)this.loginButton.getScene().getWindow();
+                    //loginStage.close();
+
+                } else {
+                    alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Login Failed");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Invalid username or password. Please try again.");
+                    alert.showAndWait();
+                }
+
             } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Login Failed");
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error");
                 alert.setHeaderText(null);
-                alert.setContentText("Invalid username or password. Please try again.");
+                alert.setContentText("Error: Please Fill In All Fields");
                 alert.showAndWait();
             }
         });
-
-        registerButton.setOnAction(event -> {
-            // Open the register window
-            openRegisterWindow();
+        this.registerButton.setOnAction((event) -> {
+            this.openRegisterWindow();
         });
     }
 
+    public void openDashboardWindow(int userId) {
+        DataSingleton data = DataSingleton.getInstance();
+        data.setUserId(userId);
+        try {
+            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/com.example.dashboardui/Dashboard.fxml"));
+            Parent root = loader.load();
+            mainStage.setScene(new Scene(root));
+            mainStage.setTitle("Dashboard");
+            mainStage.setResizable(false);
+            mainStage.show();
+        } catch (IOException var5) {
+            var5.printStackTrace();
+        }
+    }
+
+
     private void openRegisterWindow() {
         try {
-            Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com.example.loginui/Register.fxml"));
+            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/com.example.loginui/Register.fxml"));
             Parent root = loader.load();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Register");
-            stage.setResizable(false);
-            stage.show();
-
-            // Close the login window
-            Stage loginStage = (Stage) loginButton.getScene().getWindow();
-            loginStage.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            mainStage.setScene(new Scene(root));
+            mainStage.setTitle("Register");
+            mainStage.setResizable(false);
+            mainStage.show();
+            //Stage loginStage = (Stage)this.loginButton.getScene().getWindow();
+            //loginStage.close();
+        } catch (IOException var5) {
+            var5.printStackTrace();
         }
+
     }
 }

@@ -13,6 +13,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class RegisterController {
+
+    private Stage mainStage;
     public TextField firstNameField;
     public TextField lastNameField;
     @FXML
@@ -34,6 +36,7 @@ public class RegisterController {
 
     @FXML
     void initialize() {
+        this.mainStage = Main.getMainStage();
         registerButton.setOnAction(event -> {
 
             String email = emailField.getText();
@@ -78,17 +81,14 @@ public class RegisterController {
 
     private void openLoginWindow() {
         try {
-            Stage stage = new Stage();
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com.example.loginui/hello-view.fxml"));
             Parent root = loader.load();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Login");
-            stage.setResizable(false);
-            stage.show();
+            mainStage.setScene(new Scene(root));
+            mainStage.setTitle("Login");
+            mainStage.setResizable(false);
+            mainStage.show();
 
-            // Close the login window
-            Stage loginStage = (Stage) registerButton.getScene().getWindow();
-            loginStage.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
