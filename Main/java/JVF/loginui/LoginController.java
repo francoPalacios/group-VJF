@@ -3,14 +3,14 @@
 // (powered by FernFlower decompiler)
 //
 
-package com.example.loginui;
+package JVF.loginui;
 
 import java.awt.Component;
 import java.io.IOException;
 
-import com.example.Data.DataSingleton;
-import com.example.Data.DatabaseManager;
-import com.example.Main;
+import JVF.Main;
+import JVF.Data.DataSingleton;
+import JVF.Data.DatabaseManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -34,8 +34,6 @@ public class LoginController extends Component {
     @FXML
     private Button registerButton;
     private final DatabaseManager databaseManager = new DatabaseManager();
-
-    private int userId;
 
     public LoginController() {
     }
@@ -83,7 +81,7 @@ public class LoginController extends Component {
         DataSingleton data = DataSingleton.getInstance();
         data.setUserId(userId);
         try {
-            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/com.example.dashboardui/Dashboard.fxml"));
+            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/JVF.dashboardui/Dashboard.fxml"));
             Parent root = loader.load();
             mainStage.setScene(new Scene(root));
             mainStage.setTitle("Dashboard");
@@ -97,7 +95,7 @@ public class LoginController extends Component {
 
     private void openRegisterWindow() {
         try {
-            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/com.example.loginui/Register.fxml"));
+            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/JVF.loginui/Register.fxml"));
             Parent root = loader.load();
             mainStage.setScene(new Scene(root));
             mainStage.setTitle("Register");

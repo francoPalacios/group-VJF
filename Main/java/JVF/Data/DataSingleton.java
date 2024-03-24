@@ -1,4 +1,4 @@
-package com.example.Data;
+package JVF.Data;
 public class DataSingleton {
 
     private int userId;

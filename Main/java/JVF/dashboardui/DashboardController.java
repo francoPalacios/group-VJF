@@ -1,9 +1,8 @@
-package com.example.dashboardui;
+package JVF.dashboardui;
 
-import com.example.Data.DataSingleton;
-import com.example.Finances.BudgetController;
-import com.example.Data.DatabaseManager;
-import com.example.Finances.ExpensesController;
+import JVF.Data.DataSingleton;
+import JVF.Finances.BudgetController;
+import JVF.Finances.ExpensesController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,10 +14,6 @@ import java.io.IOException;
 
 public class DashboardController {
 
-    DatabaseManager Dbmanage = new DatabaseManager();
-
-
-    private int userId;
     @FXML
     private Button addBudgetButton;
     @FXML
@@ -34,7 +29,7 @@ public class DashboardController {
     private void openAddBudgetWindow(int userId) {
         try {
             // Create BudgetController instance with userId
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com.example.dashboardui/addbudget.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/JVF.dashboardui/addbudget.fxml"));
             Parent root = loader.load();
             BudgetController controller = loader.getController();
             controller.setUserId(userId);
@@ -53,7 +48,7 @@ public class DashboardController {
     private void openAddExpensesWindow(int userId) {
         try {
             // Create ExpenseController instance with userId
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com.example.dashboardui/addexpense.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/JVF.dashboardui/addexpense.fxml"));
             Parent root = loader.load();
             ExpensesController controller = loader.getController();
             controller.setUserId(userId);

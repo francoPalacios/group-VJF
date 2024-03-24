@@ -1,7 +1,7 @@
-package com.example.loginui;
+package JVF.loginui;
 
-import com.example.Data.DatabaseManager;
-import com.example.Main;
+import JVF.Data.DatabaseManager;
+import JVF.Main;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -84,7 +84,7 @@ public class RegisterController {
     private void openLoginWindow() {
         try {
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com.example.loginui/hello-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/JVF.loginui/hello-view.fxml"));
             Parent root = loader.load();
             mainStage.setScene(new Scene(root));
             mainStage.setTitle("Login");

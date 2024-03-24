@@ -1,4 +1,4 @@
-package com.example;
+package JVF;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -12,14 +12,14 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         Main.mainStage = primaryStage;
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com.example.loginui/hello-view.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/JVF.loginui/hello-view.fxml"));
         try {
             Parent root = loader.load();
             primaryStage.setScene(new Scene(root));
             primaryStage.setTitle("Login");
             primaryStage.setResizable(false);
             primaryStage.show();
-        } catch (java.io.IOException ioe) {
+        } catch (java.io.IOException ignored) {
 
         }
     }

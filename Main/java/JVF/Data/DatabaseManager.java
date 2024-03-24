@@ -1,8 +1,8 @@
-package com.example.Data;
+package JVF.Data;
 
-import com.example.Finances.Budget;
-import com.example.Finances.Expense;
-import com.example.loginui.User;
+import JVF.Finances.Expense;
+import JVF.loginui.User;
+import JVF.Finances.Budget;
 
 import java.sql.*;
 

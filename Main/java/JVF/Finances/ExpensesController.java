@@ -1,6 +1,6 @@
-package com.example.Finances;
+package JVF.Finances;
 
-import com.example.Data.DatabaseManager;
+import JVF.Data.DatabaseManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;

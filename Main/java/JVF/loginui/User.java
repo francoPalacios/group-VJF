@@ -1,4 +1,4 @@
-package com.example.loginui;
+package JVF.loginui;
 
 public class User {
     private final String email;

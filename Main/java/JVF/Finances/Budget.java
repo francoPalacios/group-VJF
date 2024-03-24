@@ -1,4 +1,4 @@
-package com.example.Finances;
+package JVF.Finances;
 import java.time.LocalDate;
 
 public class Budget {
