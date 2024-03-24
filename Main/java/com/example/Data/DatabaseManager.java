@@ -1,6 +1,8 @@
-package com.example.loginui;
+package com.example.Data;
 
-import com.example.dashboardui.Budget;
+import com.example.Finances.Budget;
+import com.example.Finances.Expense;
+import com.example.loginui.User;
 
 import java.sql.*;
 
@@ -80,7 +82,7 @@ public class DatabaseManager {
     }
     public boolean isBudgetName(String budgetname) {
         try {
-            String query = "SELECT * FROM Budget WHERE budget_name= ?";
+            String query = "SELECT * FROM Budget WHERE budget_type= ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, budgetname);
             ResultSet resultSet = statement.executeQuery();
@@ -109,4 +111,20 @@ public class DatabaseManager {
         return -1; // Return -1 if user ID is not found or login fails
     }
 
+    public boolean addExpense(Expense expense) {
+        try {
+            String sql = "INSERT INTO Expense (user_id, Amount, Recurrence, Expense_type, Description) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, expense.getuserID());
+            statement.setDouble(2, expense.getAmount());
+            statement.setString(3, expense.getRecurrence());
+            statement.setString(4, expense.getBudgetType());
+            statement.setString(5, expense.getDescription());
+            int rowsInserted = statement.executeUpdate();
+            return rowsInserted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

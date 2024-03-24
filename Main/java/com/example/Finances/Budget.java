@@ -1,4 +1,4 @@
-package com.example.dashboardui;
+package com.example.Finances;
 import java.time.LocalDate;
 
 public class Budget {

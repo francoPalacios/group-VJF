@@ -19,14 +19,10 @@
                 </Text>
                 <!-- Add your dashboard components here -->
                 <Button fx:id="addBudgetButton" text="Add Budget" />
+                <Button fx:id="addExpenseButton" text="Add Expense" />
                 <Button text="Transaction History" />
                 <Button text="Graphs and Charts" />
-                <Button text="Budget Categories" />
-                <Button text="Upcoming Bills and Payments" />
-                <Button text="Goals and Savings Tracker" />
-                <Button text="Reminders and Alerts" />
                 <Button text="Settings and Preferences" />
-                <Button text="Help and Support" />
             </children>
             <padding>
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

@@ -8,8 +8,9 @@ package com.example.loginui;
 import java.awt.Component;
 import java.io.IOException;
 
-import com.example.DataSingleton;
-import javafx.application.Platform;
+import com.example.Data.DataSingleton;
+import com.example.Data.DatabaseManager;
+import com.example.Main;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

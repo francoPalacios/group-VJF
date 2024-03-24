@@ -1,5 +1,7 @@
 package com.example.loginui;
 
+import com.example.Data.DatabaseManager;
+import com.example.Main;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

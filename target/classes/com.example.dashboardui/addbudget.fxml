@@ -7,7 +7,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" prefHeight="386.0" prefWidth="452.0" spacing="10" style="-fx-background-color: black; -fx-border-color: #00ffae;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.dashboardui.BudgetController">
+<VBox alignment="CENTER" prefHeight="386.0" prefWidth="452.0" spacing="10" style="-fx-background-color: black; -fx-border-color: #00ffae;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.Finances.BudgetController">
 
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -16,7 +16,7 @@
     <Label text="Budget Name:" textFill="#00ffae" />
     <TextField fx:id="budgetNameField" style="-fx-background-color: #00ffae; -fx-border-color: black;" />
 
-    <Label text="Income:" textFill="#00ffae" />
+    <Label text="Amount:" textFill="#00ffae" />
     <TextField fx:id="incomeField" style="-fx-background-color: #00ffae; -fx-border-color: black;" />
 
     <Label text="Income Start Date:" textFill="#00ffae" />

@@ -3,12 +3,11 @@
 // (powered by FernFlower decompiler)
 //
 
-package com.example.dashboardui;
+package com.example.Finances;
 
 import java.time.LocalDate;
 
-import com.example.dashboardui.Budget;
-import com.example.loginui.DatabaseManager;
+import com.example.Data.DatabaseManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
