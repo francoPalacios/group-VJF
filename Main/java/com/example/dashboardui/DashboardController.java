@@ -6,11 +6,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 import javax.xml.crypto.Data;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class DashboardController {
 
@@ -22,9 +25,57 @@ public class DashboardController {
     private Button addBudgetButton;
 
     @FXML
+    private Button ExpenseButton;
+    @FXML
+    private Button TransactionButton;
+    @FXML
+    private Button GraphsChartsButton;
+    @FXML
+    private Button SettingsButton;
+
+    @FXML
     void initialize() {
         DataSingleton data = DataSingleton.getInstance();
+        DatabaseManager databaseManager = new DatabaseManager();
+        if (!databaseManager.isBudgetExisting(data.getUserId())){
+            ExpenseButton.setVisible(false);
+            TransactionButton.setVisible(false);
+            GraphsChartsButton.setVisible(false);
+            SettingsButton.setVisible(false);
+        }else if(databaseManager.isBudgetExisting(data.getUserId())){
+                ExpenseButton.setVisible(true);
+                TransactionButton.setVisible(true);
+                GraphsChartsButton.setVisible(true);
+                SettingsButton.setVisible(true);
+        }
         addBudgetButton.setOnAction(event -> openAddBudgetWindow(data.getUserId()));
+
+
+  /*  if (!(data.isHasBudget())) {
+        ExpenseButton.setVisible(false);
+        TransactionButton.setVisible(false);
+        GraphsChartsButton.setVisible(false);
+        SettingsButton.setVisible(false);
+    } else if(data.isHasBudget()) {
+            ExpenseButton.setVisible(true);
+            TransactionButton.setVisible(false);
+            GraphsChartsButton.setVisible(false);
+            SettingsButton.setVisible(false);
+        } else if(data.isHasBudget() && !data.isHasExpense()) {
+        ExpenseButton.setVisible(true);
+            TransactionButton.setVisible(true);
+            GraphsChartsButton.setVisible(true);
+            SettingsButton.setVisible(true);
+
+
+    }*/
+
+
+
+    }
+
+    public void refresh() {
+       ExpenseButton.setVisible(true);
     }
 
     private void openAddBudgetWindow(int userId) {
@@ -34,6 +85,9 @@ public class DashboardController {
             Parent root = loader.load();
             BudgetController controller = loader.getController();
             controller.setUserId(userId);
+            DataSingleton data = DataSingleton.getInstance();
+         //   data.setUserId(userId);
+            data.setController(this);
 
             // Show the stage
             Stage stage = new Stage();

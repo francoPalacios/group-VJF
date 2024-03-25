@@ -7,6 +7,7 @@ package com.example.dashboardui;
 
 import java.time.LocalDate;
 
+import com.example.DataSingleton;
 import com.example.dashboardui.Budget;
 import com.example.loginui.DatabaseManager;
 import javafx.fxml.FXML;
@@ -97,12 +98,15 @@ public class BudgetController {
                 incomeField.setText("");
                 startDatePicker.setValue(null);
                 endDatePicker.setValue(null);
+                DataSingleton data = DataSingleton.getInstance();
+                data.getController().refresh();
 
             } else {
                 System.out.println("Failed to add Budget");
             }
 
         }
+
     }
 
 

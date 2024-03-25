@@ -54,6 +54,7 @@ public class LoginController extends Component {
                     confirm.showAndWait();
 
                     openDashboardWindow(databaseManager.getUserId(email,password));
+
                     //Stage loginStage = (Stage)this.loginButton.getScene().getWindow();
                     //loginStage.close();
 
@@ -81,6 +82,7 @@ public class LoginController extends Component {
     public void openDashboardWindow(int userId) {
         DataSingleton data = DataSingleton.getInstance();
         data.setUserId(userId);
+
         try {
             FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/com.example.dashboardui/Dashboard.fxml"));
             Parent root = loader.load();

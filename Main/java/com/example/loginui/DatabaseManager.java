@@ -32,6 +32,31 @@ public class DatabaseManager {
             return false;
         }
     }
+    public boolean isBudgetExisting(int user_id){
+        try {
+            String query = "SELECT * FROM Budget WHERE user_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, user_id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            return resultSet.next(); // If a row is found, credentials are valid
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean isExpenseexisting(int user_id){
+        try {
+            String query = "SELECT * FROM Expense WHERE user_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, user_id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next(); // If a row is found, credentials are valid
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     // Add new user to the database
     public boolean addUser(User user) {
@@ -80,7 +105,7 @@ public class DatabaseManager {
     }
     public boolean isBudgetName(String budgetname) {
         try {
-            String query = "SELECT * FROM Budget WHERE budget_name= ?";
+            String query = "SELECT * FROM Budget WHERE budget_type= ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, budgetname);
             ResultSet resultSet = statement.executeQuery();
