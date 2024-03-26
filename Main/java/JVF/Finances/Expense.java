@@ -29,4 +29,20 @@ public class Expense {
         return description;
     }
     public  int getuserID(){return UserID;}
-}
+
+    public int setBudgetID(String budgetType) {
+        switch (budgetType) {
+            case "Transportation":
+                return 1;
+            case "Housing":
+                return 2;
+            case "Food":
+                return 3;
+            case "Entertainment":
+                return 4;
+            case "Other":
+                return 5;
+            default:
+                throw new IllegalArgumentException("Invalid budget type: " + budgetType);
+        }
+}   }
