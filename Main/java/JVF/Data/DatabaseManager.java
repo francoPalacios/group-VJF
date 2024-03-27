@@ -66,15 +66,13 @@ public class DatabaseManager {
 }
     public boolean addbudget(Budget budget) {
         try {
-            String sql = "INSERT INTO Budget (user_id, budget_type, Amount, budget_startdate, budget_enddate, Recurrence, budget_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement statement = connection.prepareStatement(sql);
+            String sql = "INSERT INTO Budget (user_id, budget_type, Amount, budget_startdate, budget_enddate) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql, 1);
             statement.setInt(1, budget.getuserID());
-            statement.setString(2, budget.getBudgetType());
+            statement.setString(2, budget.getbudgetname());
             statement.setDouble(3, budget.getbudgetincome());
             statement.setDate(4, Date.valueOf(budget.getbudgetstartdate()));
             statement.setDate(5, Date.valueOf(budget.getbudgetenddate()));
-            statement.setString(6,budget.getRecurrence());
-            statement.setInt(7, budget.setBudgetID(budget.getBudgetType()));
             int rowsInserted = statement.executeUpdate();
             return rowsInserted > 0;
         } catch (SQLException e ) {
@@ -115,14 +113,13 @@ public class DatabaseManager {
 
     public boolean addExpense(Expense expense) {
         try {
-            String sql = "INSERT INTO Expense (user_id, Amount, Recurrence, Expense_type, Description, budget_id) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Expense (user_id, Amount, Recurrence, Expense_type, Description) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, expense.getuserID());
             statement.setDouble(2, expense.getAmount());
             statement.setString(3, expense.getRecurrence());
             statement.setString(4, expense.getBudgetType());
             statement.setString(5, expense.getDescription());
-            statement.setInt(6, expense.setBudgetID(expense.getBudgetType()));
             int rowsInserted = statement.executeUpdate();
             return rowsInserted > 0;
         } catch (SQLException e) {
