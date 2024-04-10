@@ -1,6 +1,7 @@
 package JVF.Data;
 
 import JVF.Finances.Expense;
+import JVF.Finances.FundingGroup;
 import JVF.loginui.User;
 import JVF.Finances.Budget;
 
@@ -123,6 +124,20 @@ public class DatabaseManager {
             int rowsInserted = statement.executeUpdate();
             return rowsInserted > 0;
         } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean addFundingGroup(FundingGroup fundingGroup) {
+        try {
+            String sql = "INSERT INTO FundingGroup (Fundinggroup_name, Fundinggroup_description) VALUES (?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql, 1);
+            statement.setString(1, fundingGroup.getFGName());
+            statement.setString(2, fundingGroup.getFGDes());
+            int rowsInserted = statement.executeUpdate();
+            return rowsInserted > 0;
+        } catch (SQLException e ) {
             e.printStackTrace();
             return false;
         }

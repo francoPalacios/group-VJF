@@ -20,6 +20,7 @@
                 <!-- Add your dashboard components here -->
                 <Button fx:id="addBudgetButton" text="Add Budget" />
                 <Button fx:id="addExpenseButton" text="Add Expense" />
+            <Button fx:id="addFundingGroupButton" mnemonicParsing="false" text="Add Funding Group" />
                 <Button text="Transaction History" />
                 <Button text="Graphs and Charts" />
                 <Button text="Settings and Preferences" />
