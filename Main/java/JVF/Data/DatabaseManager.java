@@ -1,11 +1,14 @@
 package JVF.Data;
 
+import JVF.Finances.BudgetFunding;
 import JVF.Finances.Expense;
 import JVF.Finances.FundingGroup;
 import JVF.loginui.User;
 import JVF.Finances.Budget;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseManager {
     private Connection connection;
@@ -141,5 +144,59 @@ public class DatabaseManager {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public boolean addBudgetFunding(BudgetFunding budgetFunding) {
+        try {
+            String sql = "INSERT INTO Budget_Funding (user_id, budget_id, FundingGroup_id, cash) VALUES (?, ?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1,budgetFunding.getUser_id());
+            statement.setInt(2, budgetFunding.getBudget_id());
+            statement.setInt(3, budgetFunding.getFundingGroup_id());
+            statement.setDouble(4, budgetFunding.getAmount());
+
+            int rowsInserted = statement.executeUpdate();
+            return rowsInserted > 0;
+        } catch (SQLException e ) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<String> getbudgetType(int user_id) {
+        List<String> data = new ArrayList<>();
+        try {
+            String sql = "SELECT budget_type FROM Budget Where user_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, user_id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                String value = resultSet.getString(1);
+                data.add(value);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+    public List<String> getFundingGroupName() {
+        List<String> data = new ArrayList<>();
+        try {
+            String sql = "SELECT Fundinggroup_name FROM FundingGroup";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                String value = resultSet.getString(1);
+                data.add(value);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
     }
 }

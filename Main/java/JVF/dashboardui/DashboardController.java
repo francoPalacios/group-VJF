@@ -2,6 +2,7 @@ package JVF.dashboardui;
 
 import JVF.Data.DataSingleton;
 import JVF.Finances.BudgetController;
+import JVF.Finances.BudgetFundingController;
 import JVF.Finances.ExpensesController;
 import JVF.Finances.FundingController;
 import javafx.fxml.FXML;
@@ -22,6 +23,8 @@ public class DashboardController {
 
     @FXML
     private Button addFundingGroupButton;
+    @FXML
+    private Button AddBudgetFundingButton;
 
     @FXML
     void initialize() {
@@ -29,6 +32,7 @@ public class DashboardController {
         addBudgetButton.setOnAction(event -> openAddBudgetWindow(data.getUserId()));
         addExpenseButton.setOnAction(event -> openAddExpensesWindow(data.getUserId()));
         addFundingGroupButton.setOnAction(event -> openAddFundingGroupWindow());
+        AddBudgetFundingButton.setOnAction(event -> openBudgetFundingWindow());
     }
 
     private void openAddBudgetWindow(int userId) {
@@ -82,6 +86,26 @@ public class DashboardController {
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.setTitle("Add Funding Group");
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openBudgetFundingWindow() {
+        try {
+            // Load the FXML file for the funding group window
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/JVF.dashboardui/BudgetFunding.fxml"));
+            Parent root = loader.load();
+
+            // Create an instance of the FundingGroupController
+            BudgetFundingController controller = loader.getController();
+
+            // Show the stage
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Add Budget-Funding");
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
