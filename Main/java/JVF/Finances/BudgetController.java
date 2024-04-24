@@ -56,7 +56,7 @@ public class BudgetController {
         }
 
         // Check if the email already exists in the database
-        if (databaseManager.isBudgetName(budgetName)) {
+        if (databaseManager.isBudgetName(userId,budgetName)) {
             Alert alExiAlert = new Alert(Alert.AlertType.ERROR);
             alExiAlert.setTitle("Error");
             alExiAlert.setHeaderText(null);

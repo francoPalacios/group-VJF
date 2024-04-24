@@ -25,4 +25,5 @@
     <TextField fx:id="amountField" style="-fx-background-color: #00ffae; -fx-border-color: black;" />
 
     <Button onAction="#saveBudgetFunding" style="-fx-border-color: black; -fx-background-color: #00ffae;" text="Save" />
+
 </VBox>

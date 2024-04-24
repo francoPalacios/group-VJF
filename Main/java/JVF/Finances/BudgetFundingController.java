@@ -2,74 +2,104 @@ package JVF.Finances;
 
 import JVF.Data.DataSingleton;
 import JVF.Data.DatabaseManager;
+import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TextField;
 
+import java.net.URL;
 import java.util.List;
+import java.util.ResourceBundle;
 
-public class BudgetFundingController {
+public class BudgetFundingController implements Initializable {
 
     @FXML
-    private ChoiceBox budgetTypeField;
+    private ChoiceBox<String> budgetTypeField;
     @FXML
-    private ChoiceBox FundingNameField;
+    private ChoiceBox<String> FundingNameField;
     @FXML
     private TextField amountField;
-    private final int user_id;
+    private int UserID;
 
     private final DatabaseManager databaseManager;
+    private ObservableMap<String, Integer> budgetTypes;
+    private ObservableMap<String, Integer> fgNames;
 
+    /*
     public BudgetFundingController(int userId) {
         this.user_id = userId;
         databaseManager = new DatabaseManager();
     }
 
-    public void initialize() {
-        DataSingleton data = DataSingleton.getInstance();
+     */
 
-        int usrID = data.getUserId();
-        List<String> budgetTypes = databaseManager.getbudgetType(usrID);
-        budgetTypeField.getItems().addAll(budgetTypes);
-
-        List<String> fgNames = databaseManager.getFundingGroupName();
-        FundingNameField.getItems().addAll(fgNames);
+    public BudgetFundingController(int userId) {
+        this.UserID = userId;
+        databaseManager = new DatabaseManager();
+    }
+    public BudgetFundingController() {
+        databaseManager = new DatabaseManager();
     }
 
     @FXML
     public void saveBudgetFunding() {
-        String budgetType = budgetTypeField.getTypeSelector();
-        String FundingName = FundingNameField.getTypeSelector();
-        String amountStr = amountField.getText();
 
-        if (budgetType.isEmpty() || FundingName.isEmpty() || amountStr.isEmpty()) {
+        String budgetType = budgetTypeField.getValue();
+        String FundingName = FundingNameField.getValue();
+        String amountStr = amountField.getText();
+        DataSingleton data = DataSingleton.getInstance();
+
+        int usrID = data.getUserId();
+        budgetTypes = databaseManager.getbudgetType(usrID);
+
+
+       // System.out.printf("Getting budgetType ID for %s and it is %d%n",
+       //         budgetType, budgetTypes.get(budgetType));
+        //System.out.printf("Getting Funding ID for %s and it is %d%n",
+        //        FundingName,fgNames.get(FundingName));
+
+        if (budgetType==null || FundingName==null || amountStr.isEmpty()) {
             showError("Error", "Please fill in all fields");
             return;
         }
 
-        double amount;
-        try {
-            amount = Double.parseDouble(amountStr);
-            if (amount <= 0) {
-                showError("Error", "Please enter a positive number for amount");
-                return;
-            }
-        } catch (NumberFormatException e) {
-            showError("Error", "Invalid input. Please enter a valid number for amount.");
-            return;
+
+            if (databaseManager.isBudgetFunding(UserID,budgetTypes.get(budgetType), fgNames.get(FundingName) )) {
+                Alert alExiAlert = new Alert(Alert.AlertType.ERROR);
+                alExiAlert.setTitle("Error");
+                alExiAlert.setHeaderText(null);
+                alExiAlert.setContentText("budgetname Is Already In Use");
+                alExiAlert.showAndWait();
+            } else {
+                try {
+                    double amount = Double.parseDouble(amountStr);
+                    if (amount <= 0) {
+                        showError("Error", "Please enter a positive number for amount");
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    showError("Error", "Invalid input. Please enter a valid number for amount.");
+                    return;
+
+                }
+                    double amount = Double.parseDouble(amountStr);
+                    BudgetFunding newBudgetFunding = new BudgetFunding(amount, UserID, budgetTypes.get(budgetType), fgNames.get(FundingName));
+
+                    if (databaseManager.addBudgetFunding(newBudgetFunding)) {
+                        showAlert("Budget Funding Added", "Budget Funding added successfully");
+                        clearFields();
+                    } else {
+                        showError("Error", "Failed to add budget funding");
+
+                }
+
         }
 
-        BudgetFunding newBudgetFunding = new BudgetFunding(amount, user_id, budgetType, FundingName);
-
-        if (databaseManager.addBudgetFunding(newBudgetFunding)) {
-            showAlert("Budget Funding Added", "Budget Funding added successfully");
-            clearFields();
-        } else {
-            showError("Error", "Failed to add budget funding");
-        }
     }
+
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -88,13 +118,24 @@ public class BudgetFundingController {
     }
 
     private void clearFields() {
-        SingleSelectionModel<String> originalSelectionModel = budgetTypeField.getSelectionModel();
-        budgetTypeField.setSelectionModel(null);
-        budgetTypeField.setSelectionModel(originalSelectionModel);
-
-        SingleSelectionModel<String> originalSelectionModelFN = FundingNameField.getSelectionModel();
-        FundingNameField.setSelectionModel(null);
-        FundingNameField.setSelectionModel(originalSelectionModelFN);
+        budgetTypeField.setValue(null);
+        FundingNameField.setValue(null);
         amountField.clear();
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        DataSingleton data = DataSingleton.getInstance();
+
+        int usrID = data.getUserId();
+        budgetTypes = databaseManager.getbudgetType(usrID);
+        //budgetTypeField.getItems().addAll(budgetTypes);
+        budgetTypeField.getItems().setAll(budgetTypes.keySet());
+
+        fgNames = databaseManager.getFundingGroupName();
+        FundingNameField.getItems().setAll(fgNames.keySet());
+    }
+    public void setUserId(int userId) {
+        this.UserID = userId;
     }
 }

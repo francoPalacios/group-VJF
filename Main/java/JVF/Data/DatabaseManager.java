@@ -5,6 +5,8 @@ import JVF.Finances.Expense;
 import JVF.Finances.FundingGroup;
 import JVF.loginui.User;
 import JVF.Finances.Budget;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -84,11 +86,26 @@ public class DatabaseManager {
             return false;
         }
     }
-    public boolean isBudgetName(String budgetname) {
+    public boolean isBudgetName(int userid, String budgetname) {
         try {
-            String query = "SELECT * FROM Budget WHERE budget_type= ?";
+            String query = "SELECT * FROM Budget WHERE user_id=? AND budget_type= ?";
             PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, budgetname);
+            statement.setInt(1, userid);
+            statement.setString(2, budgetname);
+            ResultSet resultSet = statement.executeQuery();
+            return resultSet.next(); // If resultSet.next() is true, it means email exists
+        } catch (SQLException e) {
+            System.out.println("Error checking budgetname existence: " + e.getMessage());
+        }
+        return false;
+    }
+    public boolean isBudgetFunding(int userid, int budgetid, int fundingid) {
+        try {
+            String query = "SELECT * FROM Budget_Funding WHERE user_id= ? AND budget_id=? AND FundingGroup_id=?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, userid);
+            statement.setInt(2, budgetid);
+            statement.setInt(3, fundingid);
             ResultSet resultSet = statement.executeQuery();
             return resultSet.next(); // If resultSet.next() is true, it means email exists
         } catch (SQLException e) {
@@ -163,17 +180,20 @@ public class DatabaseManager {
         }
     }
 
-    public List<String> getbudgetType(int user_id) {
-        List<String> data = new ArrayList<>();
+    public ObservableMap<String, Integer> getbudgetType(int user_id) {
+        //List<String> data = new ArrayList<>();
+        ObservableMap<String, Integer> data = FXCollections.observableHashMap();
         try {
-            String sql = "SELECT budget_type FROM Budget Where user_id = ?";
+            String sql = "SELECT budget_type, budget_id FROM Budget Where user_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, user_id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                String value = resultSet.getString(1);
-                data.add(value);
+                String key = resultSet.getString(1);
+                Integer value = resultSet.getInt(2);
+                //data.add(value);
+                data.put(key, value);
             }
 
         } catch (SQLException e) {
@@ -182,16 +202,17 @@ public class DatabaseManager {
         return data;
     }
 
-    public List<String> getFundingGroupName() {
-        List<String> data = new ArrayList<>();
+    public ObservableMap<String, Integer> getFundingGroupName() {
+        ObservableMap<String, Integer> data = FXCollections.observableHashMap();
         try {
-            String sql = "SELECT Fundinggroup_name FROM FundingGroup";
+            String sql = "SELECT Fundinggroup_name, FundingGroup_id FROM FundingGroup";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                String value = resultSet.getString(1);
-                data.add(value);
+                String key = resultSet.getString(1);
+                Integer value = resultSet.getInt(2);
+                data.put(key, value);
             }
 
         } catch (SQLException e) {
