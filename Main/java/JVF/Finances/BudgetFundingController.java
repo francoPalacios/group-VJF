@@ -129,7 +129,6 @@ public class BudgetFundingController implements Initializable {
 
         int usrID = data.getUserId();
         budgetTypes = databaseManager.getbudgetType(usrID);
-        //budgetTypeField.getItems().addAll(budgetTypes);
         budgetTypeField.getItems().setAll(budgetTypes.keySet());
 
         fgNames = databaseManager.getFundingGroupName();

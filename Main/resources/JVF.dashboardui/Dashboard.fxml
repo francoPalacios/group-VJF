@@ -32,7 +32,7 @@
         </VBox>
    </left>
    <top>
-      <Label prefHeight="87.0" prefWidth="229.0" text="Welcome" textFill="#00ffae" BorderPane.alignment="CENTER">
+      <Label fx:id="WelcomeText" prefHeight="87.0" prefWidth="229.0" text="Welcome" textFill="#00ffae" BorderPane.alignment="CENTER">
          <font>
             <Font size="54.0" />
          </font>

@@ -1,32 +1,29 @@
 package JVF.Finances;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 public class Expense {
 
     private final int UserID;
     private final double amount;
-    private final String recurrence;
-    private final String budgetType;
-    private final String description;
+    private final String Reciept;
+    private final LocalDate ExpDate;
+    private final int FGID;
 
-    public Expense(int UserID, double amount, String recurrence, String budgetType, String description) {
+    public Expense(int UserID, int FGid, double amount, String Receipt, LocalDate ExpDate) {
         this.UserID = UserID;
         this.amount = amount;
-        this.recurrence = recurrence;
-        this.budgetType = budgetType;
-        this.description = description;
+        this.Reciept = Receipt;
+        this.ExpDate = ExpDate;
+        this.FGID = FGid;
     }
 
     public double getAmount() {
         return amount;
     }
-    public String getRecurrence() {
-        return recurrence;
-    }
-    public String getBudgetType() {
-        return budgetType;
-    }
-    public String getDescription() {
-        return description;
-    }
     public  int getuserID(){return UserID;}
+    public String getReciept() { return Reciept; }
+    public LocalDate getExpDate() { return ExpDate; }
+    public int getFGID() { return FGID; }
 }

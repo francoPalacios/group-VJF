@@ -134,13 +134,15 @@ public class DatabaseManager {
 
     public boolean addExpense(Expense expense) {
         try {
-            String sql = "INSERT INTO Expense (user_id, Amount, Recurrence, Expense_type, Description) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement statement = connection.prepareStatement(sql);
+            String sql = "INSERT INTO Expense (user_id, FoundingGroup_id, Amount, Receipt, Expense_date) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql,1);
             statement.setInt(1, expense.getuserID());
-            statement.setDouble(2, expense.getAmount());
-            statement.setString(3, expense.getRecurrence());
-            statement.setString(4, expense.getBudgetType());
-            statement.setString(5, expense.getDescription());
+            statement.setInt(2, expense.getFGID());
+            statement.setDouble(3, expense.getAmount());
+            statement.setString(4, expense.getReciept());
+            statement.setDate(5, Date.valueOf(expense.getExpDate()));
+
+
             int rowsInserted = statement.executeUpdate();
             return rowsInserted > 0;
         } catch (SQLException e) {
@@ -219,5 +221,38 @@ public class DatabaseManager {
             e.printStackTrace();
         }
         return data;
+    }
+
+    public double getCash(int fgID, int usrID) {
+        try {
+            String query = "SELECT cash FROM Budget_Funding WHERE user_id = ? AND FundingGroup_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, usrID);
+            preparedStatement.setInt(2, fgID);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getDouble("cash");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public boolean setcashleft(int fgID, int usrID, double cash) {
+        try {
+            String sql = "UPDATE Budget_Funding SET cash_left = ? WHERE user_id = ? AND FundingGroup_id = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setDouble(1, cash);
+            statement.setInt(2, usrID);
+            statement.setInt(3, fgID);
+
+            int rowsInserted = statement.executeUpdate();
+            return true;
+        } catch (SQLException e ) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

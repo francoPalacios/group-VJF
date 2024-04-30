@@ -30,6 +30,8 @@ public class RegisterController {
     @FXML
     private Button backToLoginButton;
 
+    public User user;
+
     private final DatabaseManager databaseManager;
 
     public RegisterController() {
@@ -65,6 +67,7 @@ public class RegisterController {
             } else {
 
                 User newUser = new User(email, password, firstname, lastname);
+                this.user = newUser;
 
                 if (databaseManager.addUser(newUser)) {
                     Alert addedAlert = new Alert(Alert.AlertType.INFORMATION);

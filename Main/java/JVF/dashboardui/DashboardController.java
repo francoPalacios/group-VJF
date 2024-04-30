@@ -5,11 +5,14 @@ import JVF.Finances.BudgetController;
 import JVF.Finances.BudgetFundingController;
 import JVF.Finances.ExpensesController;
 import JVF.Finances.FundingController;
+import JVF.loginui.RegisterController;
+import JVF.loginui.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -25,6 +28,8 @@ public class DashboardController {
     private Button addFundingGroupButton;
     @FXML
     private Button AddBudgetFundingButton;
+    @FXML
+    private Label WelcomeText;
 
     @FXML
     void initialize() {
