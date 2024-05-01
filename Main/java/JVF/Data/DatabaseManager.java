@@ -221,12 +221,17 @@ public class DatabaseManager {
         return data;
     }
 
-    public double getCash(int fgID, int usrID) {
+    public double getCash(int fgID, String budgetDate, int usrID) {
         try {
-            String query = "SELECT cash FROM Budget_Funding WHERE user_id = ? AND FundingGroup_id = ?";
+            String query = """
+                    SELECT bf.cash FROM Budget b INNER JOIN Budget_Funding bf ON b.budget_id = bf.budget_id
+                    WHERE bf.user_id = ? AND bf.FundingGroup_id = ?
+                    AND b.budget_startdate <= ? AND b.budget_enddate >= ?""";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, usrID);
             preparedStatement.setInt(2, fgID);
+            preparedStatement.setString(3, budgetDate);
+            preparedStatement.setString(4, budgetDate);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
@@ -237,12 +242,18 @@ public class DatabaseManager {
         }
         return 0;
     }
-    public double getCashleft(int fundingGroupId, int usrID) {
+    public double getCashleft(int fundingGroupId, String budgetDate, int usrID) {
         try {
             // Assume connection is your database connection object
-            PreparedStatement stmt = connection.prepareStatement("SELECT cash_left FROM Budget_Funding WHERE fundingGroup_id = ? AND user_id = ?");
+            PreparedStatement stmt = connection.prepareStatement("""
+                    SELECT bf.cash_left FROM Budget b
+                    INNER JOIN Budget_Funding bf ON b.budget_id = bf.budget_id
+                    WHERE bf.fundingGroup_id = ? AND bf.user_id = ? AND
+                    b.budget_startdate <= ? AND b.budget_enddate >= ?""");
             stmt.setInt(1, fundingGroupId);
             stmt.setInt(2, usrID);
+            stmt.setString(3, budgetDate);
+            stmt.setString(4, budgetDate);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return rs.getDouble("cash_left");

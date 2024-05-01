@@ -5,13 +5,21 @@ import JVF.Data.DatabaseManager;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
+import java.net.URL;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
-public class ExpensesController {
+public class ExpensesController implements Initializable, ControlChangeBudget, ExpenseCashObserver, ExpenseBudgetObserver {
 
     private int UserID;
+    private List<ExpenseBudgetObserver> budgetObserverList;
+    private List<ExpenseCashObserver> cashObserverList;
 
     @FXML
     private TextField amountField;
@@ -32,6 +40,10 @@ public class ExpensesController {
 
     public ExpensesController() {
         databaseManager = new DatabaseManager();
+        cashObserverList = new ArrayList<>();
+        budgetObserverList = new ArrayList<>();
+        this.registerForBudgetChange(this);
+        this.registerForCashChange(this);
     }
 
     @FXML
@@ -61,8 +73,9 @@ public class ExpensesController {
         DataSingleton data = DataSingleton.getInstance();
         int usrID = data.getUserId();
         Integer fundingGroupId = fgNames.get(ExpType.getValue());
-        double cash = databaseManager.getCash(fundingGroupId.intValue(), usrID);
-        double cashLeft = databaseManager.getCashleft(fundingGroupId.intValue(), usrID);
+        String mysqlDate = getMySQLDate(ExpDate.getValue());
+        double cash = databaseManager.getCash(fundingGroupId.intValue(), mysqlDate, usrID);
+        double cashLeft = databaseManager.getCashleft(fundingGroupId.intValue(), mysqlDate, usrID);
         if (cashLeft > 0) {
             if(amount>cashLeft){
                 showError("Error", "Error: amount bigger than current cash you have. Please enter a positive amount.");
@@ -122,30 +135,73 @@ public class ExpensesController {
         this.UserID = userId;
     }
 
-
-    public void initialize() {
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         DataSingleton data = DataSingleton.getInstance();
 
         int usrID = data.getUserId();
         fgNames = databaseManager.getFundingGroupName();
         ExpType.getItems().setAll(fgNames.keySet());
 
-        ExpType.setOnAction(this::handlecurrcash);
+        ExpType.setOnAction(event -> {
+            //handlecurrcash(event);
+            notifyBudgetChange();
+        });
+        //ExpDate.setOnAction(this::handlecurrcash);
+        ExpDate.setOnAction((event) -> {
+            notifyBudgetChange();
+        });
         amountField.textProperty().addListener((observable, oldValue, newValue) -> {
-            handleCashLeft();});
+            //handleCashLeft();
+            notifyBudgetChange();
+        });
     }
 
-    private void handlecurrcash(ActionEvent e) {
+    private static String getMySQLDate(LocalDate dateIn) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return dateIn.format(formatter);
+    }
+
+    @Override
+    public void registerForBudgetChange(ExpenseBudgetObserver ebo) {
+        this.budgetObserverList.add(ebo);
+    }
+
+    @Override
+    public void registerForCashChange(ExpenseCashObserver eco) {
+        this.cashObserverList.add(eco);
+    }
+
+    @Override
+    public void notifyBudgetChange() {
+        for(ExpenseBudgetObserver ebo : budgetObserverList) {
+            ebo.updateCashOnHand();
+        }
+    }
+
+    @Override
+    public void notifyCashChange() {
+        for(ExpenseCashObserver eco : cashObserverList) {
+            eco.updateCashLeft();
+        }
+    }
+
+    @Override
+    public void updateCashOnHand() {
+        if( ExpDate.getValue() == null ) { return; }
+
+        // Look up budgets for date range
+        String mysqlDate = getMySQLDate(ExpDate.getValue());
         DataSingleton data = DataSingleton.getInstance();
 
         int usrID = data.getUserId();
         Integer fundingGroupId = fgNames.get(ExpType.getValue());
         if (fundingGroupId != null) {
-            double cashLeft = databaseManager.getCashleft(fundingGroupId.intValue(), usrID);
+            double cashLeft = databaseManager.getCashleft(fundingGroupId.intValue(), mysqlDate, usrID);
             if (cashLeft > 0) {
                 CurrCash.setText(String.valueOf(cashLeft));
             } else {
-                double cash = databaseManager.getCash(fundingGroupId.intValue(), usrID);
+                double cash = databaseManager.getCash(fundingGroupId.intValue(), mysqlDate, usrID);
                 CurrCash.setText(String.valueOf(cash));
                 this.currentcash = cash;
             }
@@ -154,10 +210,12 @@ public class ExpensesController {
             // For example, show an error message or set a default value
             CurrCash.setText("0.0"); // Set a default value
         }
+        notifyCashChange();
     }
 
-
-    private void handleCashLeft() {
+    @Override
+    public void updateCashLeft() {
+        String mysqlDate = getMySQLDate(ExpDate.getValue());
         DataSingleton data = DataSingleton.getInstance();
 
         int usrID = data.getUserId();
@@ -178,20 +236,19 @@ public class ExpensesController {
 
         Integer fundingGroupId = fgNames.get(ExpType.getValue());
         if (fundingGroupId != null) {
-                double cashleft = databaseManager.getCashleft(fundingGroupId.intValue(), usrID);
-                if(cashleft > 0) {
-                    double cashleftsub = cashleft - cashamt;
-                    CashLeft.setText(String.valueOf(cashleftsub));
-                }else{
-                    double cash = databaseManager.getCash(fundingGroupId.intValue(), usrID);
-                    double currentcash= cash - cashamt;
-                    CashLeft.setText(String.valueOf(currentcash));
+            double cashleft = databaseManager.getCashleft(fundingGroupId.intValue(), mysqlDate, usrID);
+            if(cashleft > 0) {
+                double cashleftsub = cashleft - cashamt;
+                CashLeft.setText(String.valueOf(cashleftsub));
+            }else{
+                double cash = databaseManager.getCash(fundingGroupId.intValue(), mysqlDate, usrID);
+                double currentcash= cash - cashamt;
+                CashLeft.setText(String.valueOf(currentcash));
             }
-           // databaseManager.setcashleft(fundingGroupId.intValue(), usrID, cashLeft);
-            } else{
+            // databaseManager.setcashleft(fundingGroupId.intValue(), usrID, cashLeft);
+        } else{
             // Handle the case when the fundingGroupId is null
             CashLeft.setText("0.0"); // Set a default value
         }
     }
-
 }
