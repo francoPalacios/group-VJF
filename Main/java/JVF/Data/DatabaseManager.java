@@ -9,8 +9,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatabaseManager {
     private Connection connection;
@@ -239,6 +237,25 @@ public class DatabaseManager {
         }
         return 0;
     }
+    public double getCashleft(int fundingGroupId, int usrID) {
+        try {
+            // Assume connection is your database connection object
+            PreparedStatement stmt = connection.prepareStatement("SELECT cash_left FROM Budget_Funding WHERE fundingGroup_id = ? AND user_id = ?");
+            stmt.setInt(1, fundingGroupId);
+            stmt.setInt(2, usrID);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("cash_left");
+            } else {
+                return 0.0; // Or handle the case when no result is found
+            }
+        } catch (SQLException e) {
+            // Handle exception
+            e.printStackTrace();
+            return 0.0; // Return a default value or handle the exception as needed
+        }
+    }
+
 
     public boolean setcashleft(int fgID, int usrID, double cash) {
         try {

@@ -58,11 +58,36 @@ public class ExpensesController {
             return;
         }
 
+        DataSingleton data = DataSingleton.getInstance();
+        int usrID = data.getUserId();
+        Integer fundingGroupId = fgNames.get(ExpType.getValue());
+        double cash = databaseManager.getCash(fundingGroupId.intValue(), usrID);
+        double cashLeft = databaseManager.getCashleft(fundingGroupId.intValue(), usrID);
+        if (cashLeft > 0) {
+            if(amount>cashLeft){
+                showError("Error", "Error: amount bigger than current cash you have. Please enter a positive amount.");
+                return;
+            }else {
+                double cashLeftsub = cashLeft - amount;
+                databaseManager.setcashleft(fundingGroupId.intValue(), usrID, cashLeftsub);
+            }
+
+        } else if(cashLeft==0){
+            if(amount>cash){
+                showError("Error", "Error: amount bigger than current cash you have. Please enter a positive amount.");
+                return;
+            }else {
+                double cashsub = cash - amount;
+                databaseManager.setcashleft(fundingGroupId.intValue(), usrID, cashsub);
+            }
+        }
+
         Expense newExpense = new Expense(UserID, fgNames.get(expType), amount, recpt, expdate);
 
         if (databaseManager.addExpense(newExpense)) {
             showAlert("Expense Added", "Expense added successfully");
             clearFields();
+            // databaseManager.setcashleft(fundingGroupId.intValue(), usrID, cashLeft);
         } else {
             showError("Error", "Failed to add expense");
         }
@@ -116,9 +141,14 @@ public class ExpensesController {
         int usrID = data.getUserId();
         Integer fundingGroupId = fgNames.get(ExpType.getValue());
         if (fundingGroupId != null) {
-            double Cash = databaseManager.getCash(fundingGroupId.intValue(), usrID);
-            CurrCash.setText(String.valueOf(Cash));
-            this.currentcash = Cash;
+            double cashLeft = databaseManager.getCashleft(fundingGroupId.intValue(), usrID);
+            if (cashLeft > 0) {
+                CurrCash.setText(String.valueOf(cashLeft));
+            } else {
+                double cash = databaseManager.getCash(fundingGroupId.intValue(), usrID);
+                CurrCash.setText(String.valueOf(cash));
+                this.currentcash = cash;
+            }
         } else {
             // Handle the case when the fundingGroupId is null
             // For example, show an error message or set a default value
@@ -126,12 +156,14 @@ public class ExpensesController {
         }
     }
 
+
     private void handleCashLeft() {
         DataSingleton data = DataSingleton.getInstance();
 
         int usrID = data.getUserId();
         String amountStr = amountField.getText();
         if (amountStr.isEmpty()) {
+            CashLeft.setText("");
             return; // No need to proceed if the amount is empty
         }
 
@@ -146,11 +178,17 @@ public class ExpensesController {
 
         Integer fundingGroupId = fgNames.get(ExpType.getValue());
         if (fundingGroupId != null) {
-            double cash = databaseManager.getCash(fundingGroupId.intValue(), usrID);
-            double cashLeft = cash - cashamt;
-            CashLeft.setText(String.valueOf(cashLeft));
-            databaseManager.setcashleft(fundingGroupId.intValue(), usrID, cashLeft);
-        } else {
+                double cashleft = databaseManager.getCashleft(fundingGroupId.intValue(), usrID);
+                if(cashleft > 0) {
+                    double cashleftsub = cashleft - cashamt;
+                    CashLeft.setText(String.valueOf(cashleftsub));
+                }else{
+                    double cash = databaseManager.getCash(fundingGroupId.intValue(), usrID);
+                    double currentcash= cash - cashamt;
+                    CashLeft.setText(String.valueOf(currentcash));
+            }
+           // databaseManager.setcashleft(fundingGroupId.intValue(), usrID, cashLeft);
+            } else{
             // Handle the case when the fundingGroupId is null
             CashLeft.setText("0.0"); // Set a default value
         }
