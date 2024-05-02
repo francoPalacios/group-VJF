@@ -1,10 +1,13 @@
 package com.example.loginui;
 
+import com.example.DataSingleton;
+
 public class User {
     private final String email;
     private final String password;
     private final String firstname;
     private final String lastname;
+    private DatabaseManager databaseManager;
 
 
     // Constructor, getters, and setters
@@ -14,8 +17,12 @@ public class User {
         this.firstname = firstname;
         this.lastname = lastname;
 
+        this.databaseManager = new DatabaseManager();
 
-    }
+
+        }
+
+
 
     public String getEmail() {
         return email;
@@ -25,4 +32,5 @@ public class User {
     }
     public String getFirstname() { return firstname; }
     public String getLastname() { return lastname; }
+
 }

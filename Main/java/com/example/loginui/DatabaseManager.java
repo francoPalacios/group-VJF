@@ -5,7 +5,7 @@ import com.example.dashboardui.Budget;
 import java.sql.*;
 
 public class DatabaseManager {
-    private Connection connection;
+    private static Connection connection;
 
     public DatabaseManager() {
         try {
@@ -92,7 +92,7 @@ public class DatabaseManager {
     }
 
     // Retrieve user ID along with login validation
-    public int getUserId(String email, String password) {
+    public static int getUserId(String email, String password) {
         try {
             String query = "SELECT user_id FROM User WHERE Email = ? AND password = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -109,4 +109,17 @@ public class DatabaseManager {
         return -1; // Return -1 if user ID is not found or login fails
     }
 
+
+    public static boolean deleteUser(int userId) {
+        try {
+            String query = "DELETE FROM User WHERE user_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, userId);
+            int rowsDeleted = preparedStatement.executeUpdate();
+            return rowsDeleted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

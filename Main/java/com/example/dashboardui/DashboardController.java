@@ -14,6 +14,7 @@ import java.io.IOException;
 
 public class DashboardController {
 
+    public Button settingsButton;
     DatabaseManager Dbmanage = new DatabaseManager();
 
 
@@ -25,7 +26,12 @@ public class DashboardController {
     void initialize() {
         DataSingleton data = DataSingleton.getInstance();
         addBudgetButton.setOnAction(event -> openAddBudgetWindow(data.getUserId()));
+
+        settingsButton.setOnAction(event -> openSettingsWindow(data.getUserId()));
+
+
     }
+
 
     private void openAddBudgetWindow(int userId) {
         try {
@@ -45,4 +51,27 @@ public class DashboardController {
             e.printStackTrace();
         }
     }
+
+
+
+    private void openSettingsWindow(int userId) {
+        try {
+            // Create settings instance with userId
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com.example.dashboardui/Settings.fxml"));
+            Parent root = loader.load();
+            SettingsController controller = loader.getController();
+
+            // Show the stage
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Settings");
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
+
+
+

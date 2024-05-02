@@ -25,7 +25,7 @@
                 <Button text="Upcoming Bills and Payments" />
                 <Button text="Goals and Savings Tracker" />
                 <Button text="Reminders and Alerts" />
-                <Button text="Settings and Preferences" />
+                <Button fx:id="settingsButton" text="Settings" />
                 <Button text="Help and Support" />
             </children>
             <padding>
