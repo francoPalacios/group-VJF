@@ -70,7 +70,7 @@ public class SettingsController {
 
         openStages.forEach((window) -> {
             if (window.getTitle().equals("Dashboard")) {
-                FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/com.example.loginui/hello-view.fxml"));
+                FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/JVF.loginui/hello-view.fxml"));
                 Parent root = null;
                 try {
                     root = loader.load();
