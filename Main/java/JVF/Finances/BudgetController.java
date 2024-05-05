@@ -6,13 +6,13 @@
 package JVF.Finances;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import JVF.Data.DatabaseManager;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
-
+import javafx.scene.control.*;
 
 
 public class BudgetController {
@@ -24,18 +24,31 @@ public class BudgetController {
     private DatePicker startDatePicker;
     @FXML
     private DatePicker endDatePicker;
-
+    @FXML
+    private TableView<Budget> budgetTableView;
+    @FXML
+    private TableColumn<Budget, String> budgetNameColumn;
+    @FXML
+    private TableColumn<Budget, Double> amountColumn;
+    @FXML
+    private TableColumn<Budget, LocalDate> startDateColumn;
+    @FXML
+    private TableColumn<Budget, LocalDate> endDateColumn;
     private int userId;
     private final DatabaseManager databaseManager;
 
     public BudgetController(int userId) {
         databaseManager = new DatabaseManager();
         this.userId = userId;
+
     }
+
+
 
     public BudgetController() {
         databaseManager = new DatabaseManager();
     }
+
 
     @FXML
     public void budgetadd() {
@@ -56,7 +69,7 @@ public class BudgetController {
         }
 
         // Check if the email already exists in the database
-        if (databaseManager.isBudgetName(userId,budgetName)) {
+        if (databaseManager.isBudgetName(userId, budgetName)) {
             Alert alExiAlert = new Alert(Alert.AlertType.ERROR);
             alExiAlert.setTitle("Error");
             alExiAlert.setHeaderText(null);
@@ -103,6 +116,7 @@ public class BudgetController {
 
         }
     }
+
 
 
     public void setUserId(int userId) {

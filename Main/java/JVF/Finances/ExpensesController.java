@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class ExpensesController implements Initializable, ControlChangeBudget, ExpenseCashObserver, ExpenseBudgetObserver {
@@ -87,7 +88,8 @@ public class ExpensesController implements Initializable, ControlChangeBudget, E
 
         } else if(cashLeft==0){
             if(amount>cash){
-                showError("Error", "Error: amount bigger than current cash you have. Please enter a positive amount.");
+                showError("Error", "Error: The amount entered exceeds your current available cash. " +
+                        "\nPlease input a positive amount within your balance limit.");
                 return;
             }else {
                 double cashsub = cash - amount;
@@ -134,7 +136,45 @@ public class ExpensesController implements Initializable, ControlChangeBudget, E
     public void setUserId(int userId) {
         this.UserID = userId;
     }
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        DataSingleton data = DataSingleton.getInstance();
 
+        int usrID = data.getUserId();
+        //fgNames = databaseManager.getFundingGroupName();
+        fgNames= databaseManager.getAllocatedFundingNames(usrID);
+        Map<Integer, LocalDate[]> fundingGroupDates = databaseManager.getFundingGroupDates(usrID);
+        ExpType.getItems().setAll(fgNames.keySet());
+
+        ExpType.setOnAction(event -> {
+            String selectedFundingGroup = ExpType.getValue();
+            if (selectedFundingGroup != null && fgNames.containsKey(selectedFundingGroup)) {
+                int fundingGroupId = fgNames.get(selectedFundingGroup);
+                LocalDate[] dates = fundingGroupDates.get(fundingGroupId);
+                if (dates != null) {
+                    ExpDate.setDayCellFactory(picker -> new DateCell() {
+                        @Override
+                        public void updateItem(LocalDate date, boolean empty) {
+                            super.updateItem(date, empty);
+                            setDisable(empty || date.isBefore(dates[0]) || date.isAfter(dates[1]));
+                        }
+                    });
+                }
+            }
+            notifyBudgetChange();
+        });
+
+        ExpDate.setOnAction(event -> {
+            notifyBudgetChange();
+        });
+
+        amountField.textProperty().addListener((observable, oldValue, newValue) -> {
+            notifyBudgetChange();
+        });
+    }
+
+
+/*
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         DataSingleton data = DataSingleton.getInstance();
@@ -156,6 +196,9 @@ public class ExpensesController implements Initializable, ControlChangeBudget, E
             notifyBudgetChange();
         });
     }
+
+ */
+
 
     private static String getMySQLDate(LocalDate dateIn) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -230,7 +273,7 @@ public class ExpensesController implements Initializable, ControlChangeBudget, E
             cashamt = Double.parseDouble(amountStr);
         } catch (NumberFormatException e) {
             // Handle invalid input
-            CashLeft.setText("Invalid input");
+           // CashLeft.setText("Invalid input");
             return;
         }
 

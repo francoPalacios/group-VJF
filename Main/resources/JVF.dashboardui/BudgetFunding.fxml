@@ -23,6 +23,8 @@
 
     <Label text="Amount:" textFill="#00ffae" />
     <TextField fx:id="amountField" style="-fx-background-color: #00ffae; -fx-border-color: black;" />
+   <Label text="Current Budget:" textFill="#00ffae" />
+   <Label fx:id="CurrentBudget" textFill="#00ffae" />
 
     <Button onAction="#saveBudgetFunding" style="-fx-border-color: black; -fx-background-color: #00ffae;" text="Save" />
 

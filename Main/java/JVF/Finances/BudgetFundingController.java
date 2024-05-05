@@ -2,16 +2,14 @@ package JVF.Finances;
 
 import JVF.Data.DataSingleton;
 import JVF.Data.DatabaseManager;
+import javafx.application.Platform;
 import javafx.collections.ObservableMap;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.SingleSelectionModel;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class BudgetFundingController implements Initializable {
@@ -22,6 +20,8 @@ public class BudgetFundingController implements Initializable {
     private ChoiceBox<String> FundingNameField;
     @FXML
     private TextField amountField;
+    @FXML
+    private Label CurrentBudget;
     private int UserID;
 
     private final DatabaseManager databaseManager;
@@ -55,12 +55,6 @@ public class BudgetFundingController implements Initializable {
         int usrID = data.getUserId();
         budgetTypes = databaseManager.getbudgetType(usrID);
 
-
-       // System.out.printf("Getting budgetType ID for %s and it is %d%n",
-       //         budgetType, budgetTypes.get(budgetType));
-        //System.out.printf("Getting Funding ID for %s and it is %d%n",
-        //        FundingName,fgNames.get(FundingName));
-
         if (budgetType==null || FundingName==null || amountStr.isEmpty()) {
             showError("Error", "Please fill in all fields");
             return;
@@ -71,33 +65,40 @@ public class BudgetFundingController implements Initializable {
                 Alert alExiAlert = new Alert(Alert.AlertType.ERROR);
                 alExiAlert.setTitle("Error");
                 alExiAlert.setHeaderText(null);
-                alExiAlert.setContentText("budgetname Is Already In Use");
+                alExiAlert.setContentText("The budget has been allocated to the funding name specified.");
                 alExiAlert.showAndWait();
-            } else {
-                try {
-                    double amount = Double.parseDouble(amountStr);
-                    if (amount <= 0) {
-                        showError("Error", "Please enter a positive number for amount");
-                        return;
-                    }
-                } catch (NumberFormatException e) {
-                    showError("Error", "Invalid input. Please enter a valid number for amount.");
-                    return;
+                return;
+            }
+        double amount;
+        try {
+            amount = Double.parseDouble(amountStr);
+            if (amount <= 0) {
+                showError("Error", "Error: Please enter a positive number for amount");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            showError("Error", "Error: Invalid input. Please enter a valid number for amount.");
+            return;
+        }
 
+                Integer BudgetID = budgetTypes.get(budgetTypeField.getValue());
+                double currentcash = databaseManager.getBudgetamount(usrID,BudgetID.intValue());
+                double cashasignforeachbudget = databaseManager.getCashforbudgetcheck(usrID, BudgetID.intValue());
+                double cashplus = amount+cashasignforeachbudget;
+                if (cashplus > currentcash) {
+                    showError("Error", "Error: your assignment to each Funding is over than your current cash that you have.");
+                    return;
                 }
-                    double amount = Double.parseDouble(amountStr);
-                    BudgetFunding newBudgetFunding = new BudgetFunding(amount, UserID, budgetTypes.get(budgetType), fgNames.get(FundingName));
+
+
+                BudgetFunding newBudgetFunding = new BudgetFunding(amount,UserID, budgetTypes.get(budgetType), fgNames.get(FundingName));
 
                     if (databaseManager.addBudgetFunding(newBudgetFunding)) {
                         showAlert("Budget Funding Added", "Budget Funding added successfully");
                         clearFields();
                     } else {
                         showError("Error", "Failed to add budget funding");
-
                 }
-
-        }
-
     }
 
 
@@ -120,7 +121,7 @@ public class BudgetFundingController implements Initializable {
     private void clearFields() {
         budgetTypeField.setValue(null);
         FundingNameField.setValue(null);
-        amountField.clear();
+        Platform.runLater(() -> amountField.clear());
     }
 
     @Override
@@ -131,10 +132,129 @@ public class BudgetFundingController implements Initializable {
         budgetTypes = databaseManager.getbudgetType(usrID);
         budgetTypeField.getItems().setAll(budgetTypes.keySet());
 
+        budgetTypeField.setOnAction(event -> {
+            handleCurrentbudget();
+        });
+        amountField.textProperty().addListener((observable, oldValue, newValue) -> {
+        handlesubbudget();
+        });
+
         fgNames = databaseManager.getFundingGroupName();
         FundingNameField.getItems().setAll(fgNames.keySet());
     }
+    public void handleCurrentbudget() {
+        DataSingleton data = DataSingleton.getInstance();
+        int usrID = data.getUserId();
+        String amountStr = amountField.getText();
+        Integer BudgetTypeId = budgetTypes.get(budgetTypeField.getValue());
+
+        if (BudgetTypeId != null) {
+            double currentcash = databaseManager.getBudgetamount(usrID, BudgetTypeId.intValue());
+            double cash = databaseManager.getCashforbudgetcheck(usrID, BudgetTypeId.intValue());
+            //CurrentBudget.setText(String.valueOf(currentcash));
+            // } else {
+            // Handle the case when the fundingGroupId is null
+            //    CurrentBudget.setText("0.0"); // Set a default value
+
+            //if(cash==null && cashLeft == 0) {
+            if (cash == 0.0) {
+                CurrentBudget.setText(String.valueOf(currentcash));
+
+            } else if (cash > 0) {
+                double Budgetcash = currentcash - cash;
+                CurrentBudget.setText(String.valueOf(Budgetcash));
+            }
+        }else{
+            CurrentBudget.setText("");
+        }
+        // if (!amountStr.isEmpty()) {
+        //   double amtinput;
+        //   amtinput = Double.parseDouble(amountStr);
+        //  double budgetsub = currentcash - amtinput;
+        //  CurrentBudget.setText(String.valueOf(budgetsub));
+        // }
+    }
+
     public void setUserId(int userId) {
         this.UserID = userId;
     }
+    public void handlesubbudget() {
+        DataSingleton data = DataSingleton.getInstance();
+        int usrID = data.getUserId();
+        String amountStr = amountField.getText();
+        String selectedBudgetType = budgetTypeField.getValue();
+      double amtinput = 0;
+
+        try {
+            amtinput = Double.parseDouble(amountStr);
+        } catch (NumberFormatException e) {
+            // Handle invalid input
+            //CurrentBudget.setText("Invalid input");
+        }
+
+
+        // Check if a budget type is selected
+        if (selectedBudgetType != null) {
+            Integer BudgetTypeId = budgetTypes.get(selectedBudgetType);
+            if (BudgetTypeId != null) {
+                double currentcash = databaseManager.getBudgetamount(usrID, BudgetTypeId.intValue());
+                double cashasigntoFnG = databaseManager.getCashforbudgetcheck(usrID, BudgetTypeId.intValue());
+                if (!amountStr.isEmpty()) {
+                   // double amtinput = Double.parseDouble(amountStr);
+                    if (cashasigntoFnG == 0) {
+                        double budgetsub = currentcash - amtinput;
+                        CurrentBudget.setText(String.valueOf(budgetsub));
+                    } else {
+                        double budgetsub = (currentcash - cashasigntoFnG) - amtinput;
+                        CurrentBudget.setText(String.valueOf(budgetsub));
+                    }
+                } else {
+                    if (cashasigntoFnG == 0) {
+                        CurrentBudget.setText(String.valueOf(currentcash));
+                    } else {
+                        double budgetsub = currentcash - cashasigntoFnG;
+                        CurrentBudget.setText(String.valueOf(budgetsub));
+                    }
+                }
+            } else {
+                // Handle case when BudgetTypeId is null
+                CurrentBudget.setText("");
+            }
+        } else {
+            // Handle case when no budget type is selected
+            CurrentBudget.setText("");
+        }
+    }
+
+    public void handlesubbudget1() {
+        DataSingleton data = DataSingleton.getInstance();
+        int usrID = data.getUserId();
+        String amountStr = amountField.getText();
+        Integer BudgetTypeId = budgetTypes.get(budgetTypeField.getValue());
+        if (!amountStr.isEmpty()) {
+            double currentcash = databaseManager.getBudgetamount(usrID, BudgetTypeId.intValue());
+            double cashasigntoFnG = databaseManager.getCashforbudgetcheck(usrID, BudgetTypeId.intValue());
+            double amtinput = Double.parseDouble(amountStr);
+            if(cashasigntoFnG==0) {
+                double budgetsub = currentcash - amtinput;
+                CurrentBudget.setText(String.valueOf(budgetsub));
+            }else{
+                double budgetsub = (currentcash-cashasigntoFnG) - amtinput;
+                CurrentBudget.setText(String.valueOf(budgetsub));
+            }
+        }else{
+            double currentcash = databaseManager.getBudgetamount(usrID, BudgetTypeId.intValue());
+            double cashasigntoFnG = databaseManager.getCashforbudgetcheck(usrID, BudgetTypeId.intValue());
+            if(cashasigntoFnG==0) {
+                CurrentBudget.setText(String.valueOf(currentcash));
+            }else{
+                double budgetsub = currentcash-cashasigntoFnG;
+                CurrentBudget.setText(String.valueOf(budgetsub));
+            }
+        }
+
+    }
+
+
+
 }
