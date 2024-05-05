@@ -1,6 +1,6 @@
 package JVF.loginui;
 
-import com.example.DataSingleton;
+import JVF.Data.DatabaseManager;
 
 public class User {
     private final String email;

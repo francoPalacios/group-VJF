@@ -1,6 +1,5 @@
-package com.example.dashboardui;
-import com.example.DataSingleton;
-import com.example.loginui.DatabaseManager;
+package JVF.Finances;
+import JVF.Data.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,6 +10,9 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,17 @@ public class SettingsController {
     private Button mainMenu;
 
     private int userId;
+
+    private Connection connection;
+
+    {
+        try {
+            connection = DriverManager.getConnection("jdbc:mysql://dbcis18.clcw0sciasjn.us-east-2.rds.amazonaws.com:3306/DBCIS18",
+                    "root", "cis12345");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public SettingsController() {
         userId = DataSingleton.getInstance().getUserId();
@@ -79,7 +92,7 @@ public class SettingsController {
 
 
     private void deleteProfile(){
-        if(DatabaseManager.deleteUser(userId)) {
+        if(DatabaseManager.deleteUser(connection, userId)) {
             // Logout of the system
             System.out.println("logged out");
             closeAllWindows();

@@ -1,5 +1,6 @@
 package JVF.dashboardui;
 
+import JVF.Finances.SettingsController;
 import JVF.Data.DataSingleton;
 import JVF.Finances.BudgetController;
 import JVF.Finances.BudgetFundingController;
@@ -30,6 +31,8 @@ public class DashboardController {
     private Button AddBudgetFundingButton;
     @FXML
     private Label WelcomeText;
+    @FXML
+    public Button settingsButton;
 
     @FXML
     void initialize() {
@@ -38,6 +41,7 @@ public class DashboardController {
         addExpenseButton.setOnAction(event -> openAddExpensesWindow(data.getUserId()));
         addFundingGroupButton.setOnAction(event -> openAddFundingGroupWindow());
         AddBudgetFundingButton.setOnAction(event -> openBudgetFundingWindow(data.getUserId()));
+        settingsButton.setOnAction(event -> openSettingsWindow(data.getUserId()));
     }
 
     private void openAddBudgetWindow(int userId) {
@@ -112,6 +116,24 @@ public class DashboardController {
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.setTitle("Add Budget-Funding");
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openSettingsWindow(int userId) {
+        try {
+            // Create settings instance with userId
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/JVF.dashboardui/Settings.fxml"));
+            Parent root = loader.load();
+            SettingsController controller = loader.getController();
+
+            // Show the stage
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Settings");
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {

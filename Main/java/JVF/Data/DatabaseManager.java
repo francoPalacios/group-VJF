@@ -11,7 +11,9 @@ import javafx.collections.ObservableMap;
 import java.sql.*;
 
 public class DatabaseManager {
+
     private Connection connection;
+
 
     public DatabaseManager() {
         try {
@@ -67,7 +69,8 @@ public class DatabaseManager {
             System.out.println("Error checking email existence: " + e.getMessage());
         }
         return false;
-}
+    }
+
     public boolean addbudget(Budget budget) {
         try {
             String sql = "INSERT INTO Budget (user_id, budget_type, Amount, budget_startdate, budget_enddate) VALUES (?, ?, ?, ?, ?)";
@@ -79,11 +82,12 @@ public class DatabaseManager {
             statement.setDate(5, Date.valueOf(budget.getbudgetenddate()));
             int rowsInserted = statement.executeUpdate();
             return rowsInserted > 0;
-        } catch (SQLException e ) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
+
     public boolean isBudgetName(int userid, String budgetname) {
         try {
             String query = "SELECT * FROM Budget WHERE user_id=? AND budget_type= ?";
@@ -97,6 +101,7 @@ public class DatabaseManager {
         }
         return false;
     }
+
     public boolean isBudgetFunding(int userid, int budgetid, int fundingid) {
         try {
             String query = "SELECT * FROM Budget_Funding WHERE user_id= ? AND budget_id=? AND FundingGroup_id=?";
@@ -133,7 +138,7 @@ public class DatabaseManager {
     public boolean addExpense(Expense expense) {
         try {
             String sql = "INSERT INTO Expense (user_id, FoundingGroup_id, Amount, Receipt, Expense_date) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement statement = connection.prepareStatement(sql,1);
+            PreparedStatement statement = connection.prepareStatement(sql, 1);
             statement.setInt(1, expense.getuserID());
             statement.setInt(2, expense.getFGID());
             statement.setDouble(3, expense.getAmount());
@@ -157,7 +162,7 @@ public class DatabaseManager {
             statement.setString(2, fundingGroup.getFGDes());
             int rowsInserted = statement.executeUpdate();
             return rowsInserted > 0;
-        } catch (SQLException e ) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
@@ -167,14 +172,14 @@ public class DatabaseManager {
         try {
             String sql = "INSERT INTO Budget_Funding (user_id, budget_id, FundingGroup_id, cash) VALUES (?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1,budgetFunding.getUser_id());
+            statement.setInt(1, budgetFunding.getUser_id());
             statement.setInt(2, budgetFunding.getBudget_id());
             statement.setInt(3, budgetFunding.getFundingGroup_id());
             statement.setDouble(4, budgetFunding.getAmount());
 
             int rowsInserted = statement.executeUpdate();
             return rowsInserted > 0;
-        } catch (SQLException e ) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
@@ -242,6 +247,7 @@ public class DatabaseManager {
         }
         return 0;
     }
+
     public double getCashleft(int fundingGroupId, String budgetDate, int usrID) {
         try {
             // Assume connection is your database connection object
@@ -278,7 +284,20 @@ public class DatabaseManager {
 
             int rowsInserted = statement.executeUpdate();
             return true;
-        } catch (SQLException e ) {
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean deleteUser(Connection connection, int userId) {
+        try {
+            String query = "DELETE FROM User WHERE user_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, userId);
+            int rowsDeleted = preparedStatement.executeUpdate();
+            return rowsDeleted > 0;
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
