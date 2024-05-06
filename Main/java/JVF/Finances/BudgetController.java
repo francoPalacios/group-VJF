@@ -53,7 +53,17 @@ public class BudgetController {
         // Assuming userId is set somewhere before this method is called
         populateBudgetTableView();
     }
+    private void showError(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
     private void openUpdateDialog(Budget selectedBudget) {
+        if(databaseManager.BudgetFundingcheck(data.getUserId())){
+            showError("Error", "Error: You have allocated this Budget to some specified funding name");
+        }else{
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Update Budget");
         dialog.setHeaderText("Update Budget Information");
@@ -72,10 +82,11 @@ public class BudgetController {
                 updatedAlert.showAndWait();
                 populateBudgetTableView(); // Refresh TableView after update
             } else {
-                System.out.println("Failed to update Budget");
+                showError("Error", "Error: Failed to update Budget");
             }
         });
     }
+        }
     // Method to populate the TableView with inserted data
     public void populateBudgetTableView() {
 
