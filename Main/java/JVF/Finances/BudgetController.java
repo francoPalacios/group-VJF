@@ -6,13 +6,17 @@
 package JVF.Finances;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Optional;
 
+import JVF.Data.DataSingleton;
 import JVF.Data.DatabaseManager;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 
 public class BudgetController {
@@ -27,6 +31,8 @@ public class BudgetController {
     @FXML
     private TableView<Budget> budgetTableView;
     @FXML
+    private TableColumn<Budget, String> budgetIdColumn;
+    @FXML
     private TableColumn<Budget, String> budgetNameColumn;
     @FXML
     private TableColumn<Budget, Double> amountColumn;
@@ -36,17 +42,87 @@ public class BudgetController {
     private TableColumn<Budget, LocalDate> endDateColumn;
     private int userId;
     private final DatabaseManager databaseManager;
-
-    public BudgetController(int userId) {
-        databaseManager = new DatabaseManager();
-        this.userId = userId;
-
-    }
-
-
+    private DataSingleton data;
 
     public BudgetController() {
         databaseManager = new DatabaseManager();
+        data = DataSingleton.getInstance();
+    }
+    @FXML
+    public void initialize() {
+        // Assuming userId is set somewhere before this method is called
+        populateBudgetTableView();
+    }
+    private void openUpdateDialog(Budget selectedBudget) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Update Budget");
+        dialog.setHeaderText("Update Budget Information");
+        dialog.setContentText("Enter the new amount:");
+
+        // Traditional way to get the response value.
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(newAmount -> {
+            // Perform the update operation using the DatabaseManager
+            selectedBudget.setBudgetincome(Double.parseDouble(newAmount));
+            if (databaseManager.updateBudget(selectedBudget)) {
+                Alert updatedAlert = new Alert(Alert.AlertType.INFORMATION);
+                updatedAlert.setTitle("Budget Updated");
+                updatedAlert.setHeaderText(null);
+                updatedAlert.setContentText("Budget Updated Successfully");
+                updatedAlert.showAndWait();
+                populateBudgetTableView(); // Refresh TableView after update
+            } else {
+                System.out.println("Failed to update Budget");
+            }
+        });
+    }
+    // Method to populate the TableView with inserted data
+    public void populateBudgetTableView() {
+
+        ObservableList<Budget> budgetList = FXCollections.observableArrayList(databaseManager.getAllBudgets(data.getUserId()));
+
+        /*
+        TableColumn<Budget,Integer> budgetId = new TableColumn<>("budget_id");
+        TableColumn<Budget,String> budgetType = new TableColumn<>("budget_type");
+        TableColumn<Budget,Double> budgetAmt = new TableColumn<>("Amount");
+        TableColumn<Budget, Date> budgetStart = new TableColumn<>("budget_startdate");
+        TableColumn<Budget,Date> budgetEnd = new TableColumn<>("budget_enddate");
+        budgetTableView.getColumns().addAll(budgetId);
+        budgetTableView.getColumns().addAll(budgetType);
+        budgetTableView.getColumns().addAll(budgetAmt);
+        budgetTableView.getColumns().addAll(budgetStart);
+        budgetTableView.getColumns().addAll(budgetEnd);
+
+         */
+
+
+        budgetIdColumn.setCellValueFactory(new PropertyValueFactory<>("budgetId"));
+
+        budgetNameColumn.setCellValueFactory(new PropertyValueFactory<>("budgetName"));
+
+        amountColumn.setCellValueFactory(new PropertyValueFactory<>("budgetincome"));
+        startDateColumn.setCellValueFactory(new PropertyValueFactory<>("budgetstartdate"));
+        endDateColumn.setCellValueFactory(new PropertyValueFactory<>("budgetenddate"));
+
+
+
+        budgetTableView.setItems(budgetList);
+    }
+    @FXML
+    public void updateSelectedBudget() {
+        // Get the selected budget from the TableView
+        Budget selectedBudget = budgetTableView.getSelectionModel().getSelectedItem();
+        if (selectedBudget == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText(null);
+            alert.setContentText("Please select a budget to update.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Assuming you have a method to open an update dialog with the selected budget
+        openUpdateDialog(selectedBudget);
     }
 
 
@@ -69,7 +145,7 @@ public class BudgetController {
         }
 
         // Check if the email already exists in the database
-        if (databaseManager.isBudgetName(userId, budgetName)) {
+        if (databaseManager.isBudgetName(data.getUserId(), budgetName)) {
             Alert alExiAlert = new Alert(Alert.AlertType.ERROR);
             alExiAlert.setTitle("Error");
             alExiAlert.setHeaderText(null);
@@ -97,7 +173,7 @@ public class BudgetController {
             }
 
             double income = Double.parseDouble(incomestr);
-            Budget newbudget = new Budget(userId, budgetName, income, budgetStartDate, budgetEndDate);
+            Budget newbudget = new Budget(data.getUserId(), budgetName, income, budgetStartDate, budgetEndDate);
 
             if (databaseManager.addbudget(newbudget)) {
                 Alert addedAlert = new Alert(Alert.AlertType.INFORMATION);

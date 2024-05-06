@@ -1,10 +1,7 @@
 package JVF.Data;
 
-import JVF.Finances.BudgetFunding;
-import JVF.Finances.Expense;
-import JVF.Finances.FundingGroup;
+import JVF.Finances.*;
 import JVF.loginui.User;
-import JVF.Finances.Budget;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 
@@ -78,10 +75,10 @@ public class DatabaseManager {
             String sql = "INSERT INTO Budget (user_id, budget_type, Amount, budget_startdate, budget_enddate) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(sql, 1);
             statement.setInt(1, budget.getuserID());
-            statement.setString(2, budget.getbudgetname());
-            statement.setDouble(3, budget.getbudgetincome());
-            statement.setDate(4, Date.valueOf(budget.getbudgetstartdate()));
-            statement.setDate(5, Date.valueOf(budget.getbudgetenddate()));
+            statement.setString(2, budget.getBudgetName());
+            statement.setDouble(3, budget.getBudgetincome());
+            statement.setDate(4, Date.valueOf(budget.getBudgetstartdate()));
+            statement.setDate(5, Date.valueOf(budget.getBudgetenddate()));
             int rowsInserted = statement.executeUpdate();
             return rowsInserted > 0;
         } catch (SQLException e ) {
@@ -402,5 +399,44 @@ public class DatabaseManager {
         }
     }
 
+    public boolean updateBudget(Budget budget) {
+        try {
+            String sql = "UPDATE Budget SET budget_type = ?, Amount = ?, budget_startdate = ?, budget_enddate = ? WHERE user_id = ? AND budget_type = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, budget.getBudgetName());
+            statement.setDouble(2, budget.getBudgetincome());
+            statement.setDate(3, Date.valueOf(budget.getBudgetstartdate()));
+            statement.setDate(4, Date.valueOf(budget.getBudgetenddate()));
+            statement.setInt(5, budget.getuserID());
+            statement.setString(6, budget.getBudgetName()); // Assuming budget_type is unique per user
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public List<Budget> getAllBudgets(int userId) {
+        List<Budget> budgets = new ArrayList<>();
+        try {
+            String sql = "SELECT budget_id, budget_type, Amount, budget_startdate, budget_enddate FROM Budget WHERE user_id = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                int budgetId = resultSet.getInt("budget_id"); // Assuming you have a budget_id column
+                String budgetName = resultSet.getString("budget_type");
+                double budgetIncome = resultSet.getDouble("Amount");
+                LocalDate startDate = resultSet.getDate("budget_startdate").toLocalDate();
+                LocalDate endDate = resultSet.getDate("budget_enddate").toLocalDate();
+                Budget budget = new Budget(userId, budgetName, budgetIncome, startDate, endDate);
+                budget.setBudgetId(budgetId);
+                budgets.add(budget);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return budgets;
+    }
 
 }
