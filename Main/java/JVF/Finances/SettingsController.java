@@ -4,8 +4,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.event.ActionEvent;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -49,14 +53,49 @@ public class SettingsController {
 
     @FXML
     void handleLogout(ActionEvent event) {
-        closeAllWindows();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to logout?");
 
+        // Customize the alert style
+        alert.getDialogPane().setStyle(
+                "-fx-background-color: black; " +
+                        "-fx-border-color: #00ffae; " +
+                        "-fx-text-fill: #00ffae;"
+        );
+
+        ((Label) alert.getDialogPane().lookup(".content.label")).setTextFill(Paint.valueOf("#00ffae"));
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                closeAllWindows();
+            }
+        });
     }
 
-    @FXML
-     void handleDeleteProfile(ActionEvent event){
-        deleteProfile();
 
+    @FXML
+    void handleDeleteProfile(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to delete your profile?");
+
+        // Customize the alert style
+        alert.getDialogPane().setStyle(
+                "-fx-background-color: black; " +
+                        "-fx-border-color: #00ffae; " +
+                        "-fx-text-fill: #00ffae;"
+        );
+
+        ((Label) alert.getDialogPane().lookup(".content.label")).setTextFill(Paint.valueOf("#00ffae"));
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                deleteProfile();
+            }
+        });
     }
 
 
