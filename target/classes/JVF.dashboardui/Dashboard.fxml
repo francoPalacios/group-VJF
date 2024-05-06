@@ -5,40 +5,41 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.FontWeight?>
 
 <BorderPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JVF.dashboardui.DashboardController">
-   <left>
-        <VBox alignment="CENTER" spacing="20.0" style="-fx-background-color: black;" BorderPane.alignment="CENTER">
+    <left>
+        <VBox alignment="CENTER" spacing="20.0" style="-fx-background-color: #1f1f1f; -fx-border-color: #00ffae; -fx-border-width: 2px;" BorderPane.alignment="CENTER">
             <children>
-                <Text fill="#00ffae" strokeType="OUTSIDE" strokeWidth="0.0" text="Dashboard">
+                <Label text="Dashboard" textFill="#00ffae">
                     <font>
-                        <Font size="36.0" />
+                        <Font size="24.0" />
                     </font>
-                </Text>
+                </Label>
                 <!-- Add your dashboard components here -->
-                <Button fx:id="addBudgetButton" text="Add Budget" />
-            <Button fx:id="AddBudgetFundingButton" mnemonicParsing="false" text="Add Budget-Funding" />
-            <Button fx:id="addFundingGroupButton" mnemonicParsing="false" text="Add Funding Group" />
-                <Button fx:id="addExpenseButton" text="Add Expense" />
-                <Button text="Transaction History" />
-                <Button text="Graphs and Charts" />
-                <Button fx:id="settingsButton" text="Settings" />
+                <Button fx:id="addBudgetButton" text="Add Budget" style="-fx-background-color: #00ffae; -fx-text-fill: black; -fx-font-weight: bold;" />
+                <Button fx:id="AddBudgetFundingButton" text="Add Budget-Funding" style="-fx-background-color: #00ffae; -fx-text-fill: black; -fx-font-weight: bold;" />
+                <Button fx:id="addFundingGroupButton" text="Add Funding Group" style="-fx-background-color: #00ffae; -fx-text-fill: black; -fx-font-weight: bold;" />
+                <Button fx:id="addExpenseButton" text="Add Expense" style="-fx-background-color: #00ffae; -fx-text-fill: black; -fx-font-weight: bold;" />
+                <Button text="Transaction History" style="-fx-background-color: #00ffae; -fx-text-fill: black; -fx-font-weight: bold;" />
+                <Button text="Graphs and Charts" style="-fx-background-color: #00ffae; -fx-text-fill: black; -fx-font-weight: bold;" />
+                <Button fx:id="settingsButton" text="Settings" style="-fx-background-color: #00ffae; -fx-text-fill: black; -fx-font-weight: bold;" />
             </children>
             <padding>
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
             </padding>
         </VBox>
-   </left>
-   <top>
-      <Label fx:id="WelcomeText" prefHeight="87.0" prefWidth="229.0" text="Welcome" textFill="#00ffae" BorderPane.alignment="CENTER">
-         <font>
-            <Font size="54.0" />
-         </font>
-      </Label>
-   </top>
-   <right>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
-   </right>
+    </left>
+    <top>
+        <Label fx:id="WelcomeText" prefHeight="87.0" prefWidth="229.0" text="Welcome" textFill="#00ffae" BorderPane.alignment="CENTER">
+            <font>
+                <Font size="36.0" />
+            </font>
+        </Label>
+    </top>
+    <right>
+        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+    </right>
 </BorderPane>
