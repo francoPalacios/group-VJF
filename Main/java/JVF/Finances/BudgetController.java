@@ -196,6 +196,7 @@ public class BudgetController {
                 incomeField.setText("");
                 startDatePicker.setValue(null);
                 endDatePicker.setValue(null);
+                populateBudgetTableView();
 
             } else {
                 System.out.println("Failed to add Budget");
