@@ -7,6 +7,8 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
 <VBox alignment="CENTER" prefHeight="386.0" prefWidth="452.0" spacing="10" style="-fx-background-color: black; -fx-border-color: #00ffae;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JVF.Finances.BudgetController">
 
     <padding>
@@ -26,4 +28,6 @@
     <DatePicker fx:id="endDatePicker" style="-fx-background-color: #00ffae; -fx-border-color: black;" />
 
     <Button onAction="#budgetadd" style="-fx-border-color: black; -fx-background-color: #00ffae;" text="Save" />
+
+
 </VBox>

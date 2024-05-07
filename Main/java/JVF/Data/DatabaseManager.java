@@ -9,6 +9,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DatabaseManager {
 
@@ -185,6 +190,8 @@ public class DatabaseManager {
         }
     }
 
+
+
     public ObservableMap<String, Integer> getbudgetType(int user_id) {
         //List<String> data = new ArrayList<>();
         ObservableMap<String, Integer> data = FXCollections.observableHashMap();
@@ -198,6 +205,55 @@ public class DatabaseManager {
                 String key = resultSet.getString(1);
                 Integer value = resultSet.getInt(2);
                 //data.add(value);
+                data.put(key, value);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+    public Map<Integer, LocalDate[]> getFundingGroupDates(int user_id) {
+        Map<Integer, LocalDate[]> data = new HashMap<>();
+        try {
+            String sql = "SELECT f.FundingGroup_id, b.budget_startdate, b.budget_enddate " +
+                    "FROM Budget b " +
+                    "JOIN Budget_Funding bf ON b.budget_id = bf.budget_id " +
+                    "JOIN FundingGroup f ON bf.FundingGroup_id = f.FundingGroup_id " +
+                    "WHERE b.user_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, user_id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                int fundingGroupId = resultSet.getInt("FundingGroup_id");
+                LocalDate[] dates = {
+                        resultSet.getDate("budget_startdate").toLocalDate(),
+                        resultSet.getDate("budget_enddate").toLocalDate()
+                };
+                data.put(fundingGroupId, dates);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+    public ObservableMap<String, Integer> getAllocatedFundingNames(int user_id) {
+        ObservableMap<String, Integer> data = FXCollections.observableHashMap();
+        try {
+            String sql = "SELECT fg.Fundinggroup_name, fg.FundingGroup_id " +
+                    "FROM FundingGroup fg " +
+                    "JOIN Budget_Funding bf ON fg.FundingGroup_id = bf.FundingGroup_id " +
+                    "JOIN Budget b ON bf.budget_id = b.budget_id " +
+                    "WHERE b.user_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, user_id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                String key = resultSet.getString("Fundinggroup_name");
+                Integer value = resultSet.getInt("FundingGroup_id");
                 data.put(key, value);
             }
 
@@ -274,6 +330,68 @@ public class DatabaseManager {
     }
 
 
+    public double getCashforbudgetcheck(int usrID, int BudgetID) {
+        try {
+            String query = "SELECT SUM(cash) AS cash FROM Budget_Funding Where user_id = ? AND budget_id=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, usrID);
+            preparedStatement.setInt(2, BudgetID);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getDouble("cash");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public double getBudgetamount(int usrID, int BudgetID) {
+        try {
+            // Assume connection is your database connection object
+            PreparedStatement stmt = connection.prepareStatement("""
+            SELECT Amount FROM Budget WHERE user_id = ? AND budget_id = ?""");
+            stmt.setInt(1, usrID);
+            stmt.setInt(2, BudgetID);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("Amount");
+            } else {
+                return 0.0; // Or handle the case when no result is found
+            }
+        } catch (SQLException e) {
+            // Handle exception
+            e.printStackTrace();
+            return 0.0; // Return a default value or handle the exception as needed
+        }
+    }
+
+    public boolean Budgetcheck(int userid) {
+
+        try {
+            String query = "SELECT * FROM Budget WHERE user_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, userid);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next(); // If a row is found, credentials are valid
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean BudgetFundingcheck(int userid) {
+
+        try {
+            String query = "SELECT * FROM Budget_Funding WHERE user_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, userid);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next(); // If a row is found, credentials are valid
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     public boolean setcashleft(int fgID, int usrID, double cash) {
         try {
             String sql = "UPDATE Budget_Funding SET cash_left = ? WHERE user_id = ? AND FundingGroup_id = ?";
@@ -302,4 +420,6 @@ public class DatabaseManager {
             return false;
         }
     }
+
+
 }

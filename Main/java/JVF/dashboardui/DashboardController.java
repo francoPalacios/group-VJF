@@ -2,6 +2,7 @@ package JVF.dashboardui;
 
 import JVF.Finances.SettingsController;
 import JVF.Data.DataSingleton;
+import JVF.Data.DatabaseManager;
 import JVF.Finances.BudgetController;
 import JVF.Finances.BudgetFundingController;
 import JVF.Finances.ExpensesController;
@@ -12,10 +13,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 
 public class DashboardController {
@@ -33,6 +34,11 @@ public class DashboardController {
     private Label WelcomeText;
     @FXML
     public Button settingsButton;
+    private final DatabaseManager databaseManager;
+
+    public DashboardController() {
+        databaseManager = new DatabaseManager();
+    }
 
     @FXML
     void initialize() {
@@ -64,21 +70,28 @@ public class DashboardController {
     }
 
     private void openAddExpensesWindow(int userId) {
-        try {
-            // Create ExpenseController instance with userId
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/JVF.dashboardui/addexpense.fxml"));
-            Parent root = loader.load();
-            ExpensesController controller = loader.getController();
-            controller.setUserId(userId);
+        if (!databaseManager.Budgetcheck(userId) && !databaseManager.BudgetFundingcheck(userId)) {
+            showError("Error", "Error: You don't have any budget yet. Please add your budget first" +
+                    "\n and llocate the Add Budget_Funding to each specified funding name");
+        }else if (databaseManager.Budgetcheck(userId)&& !databaseManager.BudgetFundingcheck(userId)) {
+            showError("Error", "Error: Please allocate the budget_funding to each specified funding name");
+        } else {
+            try {
+                // Create ExpenseController instance with userId
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/JVF.dashboardui/addexpense.fxml"));
+                Parent root = loader.load();
+                ExpensesController controller = loader.getController();
+                controller.setUserId(userId);
 
-            // Show the stage
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Add Expense");
-            stage.setResizable(false);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+                // Show the stage
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root));
+                stage.setTitle("Add Expense");
+                stage.setResizable(false);
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -101,25 +114,35 @@ public class DashboardController {
             e.printStackTrace();
         }
     }
-
+    private void showError(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
     private void openBudgetFundingWindow(int userId) {
-        try {
+        if (!databaseManager.Budgetcheck(userId)) {
+            showError("Error", "Error: You don't have any budget yet. Please add your budget first");
+        } else {
+            try {
 
-            // Load the FXML file for the funding group window
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/JVF.dashboardui/BudgetFunding.fxml"));
-            Parent root = loader.load();
+                // Load the FXML file for the funding group window
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/JVF.dashboardui/BudgetFunding.fxml"));
+                Parent root = loader.load();
 
-            // Create an instance of the FundingGroupController
-            BudgetFundingController controller = loader.getController();
-            controller.setUserId(userId);
-            // Show the stage
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Add Budget-Funding");
-            stage.setResizable(false);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+                // Create an instance of the FundingGroupController
+                BudgetFundingController controller = loader.getController();
+                controller.setUserId(userId);
+                // Show the stage
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root));
+                stage.setTitle("Add Budget-Funding");
+                stage.setResizable(false);
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
